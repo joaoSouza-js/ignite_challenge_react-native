@@ -1,21 +1,29 @@
+import { useState } from "react";
+import * as ImagePicker from 'expo-image-picker';
+import {PencilSimpleLine} from 'phosphor-react-native'
+import { ScrollView, VStack,Box, Center } from 'native-base'
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+
 import Logo from '@assets/logo.svg'
-import { ScrollView, VStack,Image,Box, Center } from 'native-base'
-import { Heading } from "@components/Heading";
+
 import { Text } from "@components/Text";
-import { TextInput } from "@components/TextInput";
 import { Button } from "@components/Button";
 import { Avatar } from "@components/Avatar";
-import {PencilSimpleLine} from 'phosphor-react-native'
-import * as ImagePicker from 'expo-image-picker';
-import { useState } from "react";
-import { ScreenStackProps } from "react-native-screens";
+import { Heading } from "@components/Heading";
+import { TextInput } from "@components/TextInput";
+
+import { AuthRoutesParamList } from "@routes/authRoutes";
 
 
-export function SignUp({}:ScreenStackProps<>){
+export function SignUp({navigation }: NativeStackScreenProps<AuthRoutesParamList,'SignUp'>){
     const [userPhoto, setUserPhoto] = useState < string | undefined>(undefined)
-    
-    
+
+
+    function handleNavigateToSignInScreen() {
+        navigation.navigate('SignIn')
+    }
+
     async function handlePickUserPhoto(){
         const imageResponse = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images, 
@@ -73,15 +81,28 @@ export function SignUp({}:ScreenStackProps<>){
                         </TextInput.Root >
 
                         <TextInput.Root marginTop={4}>
-                            <TextInput.Input/>
+                            <TextInput.Input
+                                placeholder="Email"
+                            />
                         </TextInput.Root>
 
                         <TextInput.Root marginTop={4}>
-                            <TextInput.Input />
+                            <TextInput.Input 
+                                placeholder="Phone" 
+                                keyboardType="name-phone-pad"
+                            />
                         </TextInput.Root>
 
                         <TextInput.Root marginTop={4}>
-                            <TextInput.PasswordInput/>
+                            <TextInput.PasswordInput
+                                placeholder="Senha"
+                            />
+                        </TextInput.Root>
+
+                        <TextInput.Root marginTop={4}>
+                            <TextInput.PasswordInput
+                                placeholder="Confirme a Senha"
+                            />
                         </TextInput.Root>
 
                         <Button marginTop={6}>Criar</Button>
@@ -90,7 +111,13 @@ export function SignUp({}:ScreenStackProps<>){
                     <Box flexGrow={1} marginTop={6}>
                         <VStack  alignItems={'center'} marginTop={'auto'} marginBottom={20}>
                             <Text>Já tem uma conta?</Text>
-                            <Button marginTop={2} variant="secundary">Ir para o login</Button>
+                            <Button 
+                                marginTop={2} 
+                                onPress={handleNavigateToSignInScreen}
+                                variant="secundary"
+                            >
+                                Ir para o login
+                            </Button>
                         </VStack>
                     </Box>
                 </VStack>

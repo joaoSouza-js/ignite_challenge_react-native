@@ -1,14 +1,20 @@
+import { Keyboard, TouchableWithoutFeedback } from 'react-native'
 import { VStack, Image, Box, Center, ScrollView  } from 'native-base'
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 
 import LogoWithMetaData from '@assets/LogoWithMetaData.png'
-import { Heading } from '@components/Heading'
+
 import { Text } from '@components/Text'
 import { TextInput } from '@components/TextInput'
-import { Keyboard, TouchableWithoutFeedback } from 'react-native'
 import { Button } from '@components/Button'
+import { AuthRoutesParamList } from '@routes/authRoutes'
 
-export function Sign(){
+
+export function SignIn({ navigation }: NativeStackScreenProps<AuthRoutesParamList, 'SignIn'>){
+    function handleNavigateToSignUpScreen(){
+        navigation.navigate('SignUp')
+    }
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <ScrollView contentContainerStyle={{flexGrow: 1}}>
@@ -68,7 +74,13 @@ export function Sign(){
                         >
                             <Text>Ainda não tem acesso?</Text>
 
-                            <Button  marginTop={4} variant='primary'>Criar uma conta</Button>
+                            <Button 
+                                onPress={handleNavigateToSignUpScreen}
+                                marginTop={4} 
+                                variant='primary'
+                            >
+                                Criar uma conta
+                            </Button>
                         </VStack> 
 
                     </Box>

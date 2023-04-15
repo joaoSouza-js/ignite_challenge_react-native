@@ -1,11 +1,11 @@
-import { Loader } from '@components/Loader';
-import { useFonts, Karla_400Regular, Karla_700Bold } from '@expo-google-fonts/karla';
-import { Sign } from '@screens/SignIn';
-import { SignUp } from '@screens/SignUp';
-import { AppContainer } from '@styles/app';
-import { theme } from '@styles/theme';
 import { NativeBaseProvider, StatusBar} from 'native-base'
-import { StyleSheet, Text, View } from 'react-native';
+import { useFonts, Karla_400Regular, Karla_700Bold } from '@expo-google-fonts/karla';
+
+import { theme } from '@styles/theme';
+import { AppContainer } from '@styles/app';
+import { Loader } from '@components/Loader';
+
+import { Router } from '@routes/index';
 
 export default function App() {
   const [fontIsLoading] =  useFonts({
@@ -21,7 +21,8 @@ export default function App() {
         backgroundColor={'transparent'}
       />
       <AppContainer>
-        {fontIsLoading ? <SignUp />: <Loader/> }
+        
+        {fontIsLoading ? <Router/>: <Loader/> }
     
       </AppContainer>
 

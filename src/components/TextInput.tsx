@@ -46,7 +46,7 @@ Input.displayName = 'Input'
 
 
 function PasswordInput(props: IInputProps){
-    const [passWordIsHiding,setPassWordIsHiding] = useState(false)
+    const [passWordIsHiding,setPassWordIsHiding] = useState(true)
     const { colors} = useTheme()
     function handleChangePasswordVisibility(){
         setPassWordIsHiding(!passWordIsHiding)
@@ -62,8 +62,8 @@ function PasswordInput(props: IInputProps){
               > 
                 { 
                     passWordIsHiding 
-                    ? <Eye size={20} color={colors.gray[600]} /> 
-                        : <EyeSlash size={20} color={colors.gray[700]} /> 
+                    ? <EyeSlash size={20} color={colors.gray[700]} /> 
+                    : <Eye size={20} color={colors.gray[600]} /> 
                 }
               </IconButton>
             }
