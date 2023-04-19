@@ -31,6 +31,10 @@ export const theme = extendTheme( {
         heading: 'Karla_700Bold',
         body: 'Karla_400Regular',
     },
+    sizes: {
+        11: 44,
+        12: 48,
+    }
     
   
 })

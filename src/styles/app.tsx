@@ -1,6 +1,9 @@
 import { useTheme } from "native-base";
 import { ReactNode } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+
 
 
 interface AppContainerProps {
@@ -9,14 +12,15 @@ interface AppContainerProps {
 export function AppContainer({ children }: AppContainerProps){
     const {colors} = useTheme()
     return (
-    
-        <SafeAreaView
-            style={{
-                flex: 1,
-                backgroundColor: colors.gray[300]
-            }}
-        >
-            {children}
-        </SafeAreaView>
+        <GestureHandlerRootView style={{flex:1}}>
+            <SafeAreaView
+                style={{
+                    flex: 1,
+                    backgroundColor: colors.gray[300]
+                }}
+            >
+                {children}
+            </SafeAreaView>
+        </GestureHandlerRootView>
     )
 }

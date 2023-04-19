@@ -6,6 +6,7 @@ import { AppContainer } from '@styles/app';
 import { Loader } from '@components/Loader';
 
 import { Router } from '@routes/index';
+import { Home } from '@screens/Home';
 
 export default function App() {
   const [fontIsLoading] =  useFonts({
@@ -22,7 +23,7 @@ export default function App() {
       />
       <AppContainer>
         
-        {fontIsLoading ? <Router/>: <Loader/> }
+        {fontIsLoading ? <Home/>: <Loader/> }
     
       </AppContainer>
 

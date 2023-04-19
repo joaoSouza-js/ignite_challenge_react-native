@@ -22,19 +22,21 @@ function AvatarRoot({children}:AvatarRootProps){
         </HStack>
     )
 }
-
-function AvatarAvatar(props: IAvatarProps){
+interface AvatarProps extends IAvatarProps {
+    variant?: 'default' | 'small'
+}
+function AvatarAvatar({ size = 20, variant='default', ...props }: AvatarProps){
     return (
         <NativeBaseAvatar
             borderWidth={'3'}
             borderColor={'blue.500'}
             overflow={'hidden'}
-            width={"20"}
-            height={'20'}
+            width={size}
+            height={size}
             {...props}
          >
             <Center backgroundColor={'gray.400'} height={'full'} width={'full'}>
-                <User/>
+                <User size={variant === 'default' ? 24: 16} />
             </Center>
          </NativeBaseAvatar>
     )
