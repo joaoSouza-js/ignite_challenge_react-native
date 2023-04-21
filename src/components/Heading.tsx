@@ -5,7 +5,7 @@ export function Heading(props: IHeadingProps) {
         <NativeBaseHeading
             fontFamily={'heading'}
             color={'gray.900'}
-            fontSize={'sm'}
+            fontSize={'xl'}
             {...props}
         />
     )

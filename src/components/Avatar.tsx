@@ -31,8 +31,8 @@ function AvatarAvatar({ size = 20, variant='default', ...props }: AvatarProps){
             borderWidth={'3'}
             borderColor={'blue.500'}
             overflow={'hidden'}
-            width={size}
             height={size}
+            width={size}
             {...props}
          >
             <Center backgroundColor={'gray.400'} height={'full'} width={'full'}>

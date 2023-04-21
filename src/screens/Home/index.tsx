@@ -26,17 +26,17 @@ export function Home(){
     function handleOpenFilterModal(){
         bottomSheetRef.current?.expand()
     }
-    function handleCloseFilterModal(){
+    function handleCloseFilterModal(){ 
         bottomSheetRef.current?.close()
     }
 
-    function handleCloseFilterModalAndKeyboard(){
+    function handleClosedKeyboard(){
         Keyboard.dismiss()
-        handleCloseFilterModal()
+       
     }
 
     return (
-        <TouchableWithoutFeedback onPress={handleCloseFilterModalAndKeyboard}>
+        <TouchableWithoutFeedback onPress={handleClosedKeyboard}>
             <VStack paddingX={6} flex={1}>
                 <HStack alignItems={'center'} marginTop={9} width={'full'} >
                     <Avatar.Avatar borderWidth={2} size={11}/>
@@ -147,7 +147,7 @@ export function Home(){
                 <FilterModal
                     
                     ref={bottomSheetRef}
-                    onCloseModal={() => {}}
+                    onCloseModal={handleCloseFilterModal}
                 /> 
 
             </VStack>

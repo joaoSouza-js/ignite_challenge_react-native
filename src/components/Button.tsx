@@ -37,7 +37,7 @@ export function Button({ variant='primary', ...props }: ButtonProps){
         <NativeBaseButton
             width={'full'}
             rounded={'md'}
-            paddingX={4}
+            
             backgroundColor={variant === 'primary' ? 'gray.900': 'gray.400'}
             _text={{
                 color: variant === 'primary' ? 'gray.100' : 'gray.800',

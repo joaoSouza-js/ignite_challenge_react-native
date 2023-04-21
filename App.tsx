@@ -7,6 +7,7 @@ import { Loader } from '@components/Loader';
 
 import { Router } from '@routes/index';
 import { Home } from '@screens/Home';
+import { AnnouncementDetails } from '@screens/AnnouncementDetails';
 
 export default function App() {
   const [fontIsLoading] =  useFonts({
@@ -23,7 +24,7 @@ export default function App() {
       />
       <AppContainer>
         
-        {fontIsLoading ? <Home/>: <Loader/> }
+        {fontIsLoading ? <AnnouncementDetails/>: <Loader/> }
     
       </AppContainer>
 
