@@ -17,7 +17,7 @@ export function PhotosMarkIndicator({ current,length}:PhotosMarkIndicatorProps){
                     backgroundColor={'white'} 
                     opacity={index <= current ? '1' : '.5'}
                     rounded={'full'}
-                    marginRight={2} width={`${(100 - 8) / (allPhotosIndicator.length)}%`} 
+                    marginRight={2} width={`${(100 - 4) / (allPhotosIndicator.length)}%`} 
                 />
             ))}
         </HStack>

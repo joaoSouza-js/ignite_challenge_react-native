@@ -1,6 +1,5 @@
 import { Dimensions ,ImageBackground } from 'react-native';
 import Carousel from "react-native-reanimated-carousel";
-import { PhotosMarkIndicator } from "./components/photosIndicator";
 import { ArrowLeft, Bank, Barcode, CreditCard, Money, QrCode, WhatsappLogo } from "phosphor-react-native";
 import { Box, HStack, IconButton, ScrollView, VStack, useTheme } from "native-base";
 
@@ -8,6 +7,7 @@ import { Text } from "@components/Text";
 import { Button } from "@components/Button";
 import { Avatar } from "@components/Avatar";
 import { Heading } from "@components/Heading";
+import { PhotosMarkIndicator } from '@components/photosIndicator';
 
 export function AnnouncementDetails(){
     const annoucementPhotos = [
@@ -20,9 +20,7 @@ export function AnnouncementDetails(){
     const screenWidth = Dimensions.get('screen').width;
 
     const {colors} = useTheme()
-
-    console.log(Array.from({ length: 5 }).map((_, i) => i +1).map(index => 100 / index))
-
+    
     return (
         <VStack flex={1}>
             <IconButton

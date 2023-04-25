@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 
 
+
 interface AppContainerProps {
     children: ReactNode
 }
