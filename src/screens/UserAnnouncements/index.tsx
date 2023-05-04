@@ -3,13 +3,24 @@ import { Heading } from "@components/Heading";
 import { Text } from "@components/Text";
 import { FlatList, HStack, IconButton, VStack } from "native-base";
 import { Plus } from "phosphor-react-native";
-
+import {useNavigation} from '@react-navigation/native'
+import { AppNavigatorRoutesProps } from "@routes/app";
 export function UserAnnouncements(){
+    const navigation = useNavigation<AppNavigatorRoutesProps>()
+    
+    function handleNavigateToCreateAnnouncementScreen() {
+        navigation.navigate('CreateAnnouncement')
+    }
+    function handleNavigateToEditAnnouncementScreen() {
+        navigation.navigate('EditAnnouncement')
+    }
     return (
         <VStack paddingX={6} marginTop={6}>
             <HStack>
                 <Heading marginLeft={6} backgroundColor={'blue.200'}  textAlign={'center'} flex={1}>Meus anúncios</Heading>
-                <IconButton>
+                <IconButton
+                    onPress={handleNavigateToCreateAnnouncementScreen}
+                >
                     <Plus size={24}/>
                 </IconButton>
             </HStack>
@@ -30,7 +41,7 @@ export function UserAnnouncements(){
                 keyExtractor={key => key}
 
                 renderItem={() => (
-                    <Card isUsed name='Tênis vermelho' price='200' />
+                    <Card onPress={handleNavigateToEditAnnouncementScreen} isUsed name='Tênis vermelho' price='200' />
 
                 )}
             />

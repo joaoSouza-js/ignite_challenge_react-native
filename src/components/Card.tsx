@@ -30,6 +30,7 @@ export function Card({ isUsed, isDeprecated=false, name, price, ...rest}:CardPro
                 backgroundColor={isDeprecated? 'black' : 'gray.300'}
                 opacity={isDeprecated ? .6 : 1}
                 rounded={'lg'}
+                {...rest}
             >
                 <Image 
                     rounded={'lg'}

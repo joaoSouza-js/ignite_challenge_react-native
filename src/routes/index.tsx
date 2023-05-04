@@ -1,6 +1,6 @@
 import { useTheme } from 'native-base'
-import { AuthRoutes } from './authRoutes'
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native'
+import { AppRoutes } from './app'
 
 export function Router(){
     const { colors } = useTheme()
@@ -8,7 +8,7 @@ export function Router(){
     NavigationTheme.colors.background = colors.gray[300]
     return (
         <NavigationContainer theme={NavigationTheme}>
-            <AuthRoutes/>
+            <AppRoutes/>
         </NavigationContainer>
 
     )

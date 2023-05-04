@@ -26,7 +26,7 @@ export default function App() {
       />
       <AppContainer>
         
-        {fontIsLoading ? <CreateAnnouncement />: <Loader/> }
+        {fontIsLoading ? <Router />: <Loader/> }
     
       </AppContainer>
 

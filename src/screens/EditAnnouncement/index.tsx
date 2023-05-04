@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { TouchableWithoutFeedback, Keyboard } from 'react-native' 
+
+import { TouchableWithoutFeedback, Keyboard } from 'react-native'
 import { HStack, Radio, ScrollView, Switch, VStack } from "native-base";
 
 import { Text } from "@components/Text";
@@ -9,24 +10,24 @@ import { Heading } from "@components/Heading";
 import { TextArea } from "@components/TextArea";
 import { CheckBox } from "@components/CheckBox";
 import { TextInput } from "@components/TextInput";
-import { PhotoModal } from "../../components/PhotoModal";
 import { ProductConfirmationModal } from "../../components/ProductConfirmationModal";
 import { AddPhotoButton, ImageProps } from "@components/AddPhotoButton";
 import { PhotoCard } from "@components/PhotoCard";
+import { PhotoModal } from "@components/PhotoModal";
 
-export function CreateAnnouncement(){
+export function EditAnnouncement() {
     const [images, setImages] = useState<ImageProps[]>([])
     const [photoModalIsVisible, setPhotoModalIsVisible] = useState(false)
     const [ProductConfirmationModalIsVisible, setProductConfirmationModalIsVisible] = useState(false)
 
     const [photoModal, setPhotoModal] = useState<string | undefined>()
 
-    function openPhotoModal(photoUrl: string){
+    function openPhotoModal(photoUrl: string) {
         setPhotoModal(photoUrl)
         setPhotoModalIsVisible(true)
     }
 
-    function closePhotoModal(){
+    function closePhotoModal() {
         setPhotoModalIsVisible(false)
     }
 
@@ -39,102 +40,102 @@ export function CreateAnnouncement(){
         setProductConfirmationModalIsVisible(false)
     }
 
-    function updateImages(newImages: ImageProps[]){
+    function updateImages(newImages: ImageProps[]) {
         const newImagesWithoutRepetition = newImages.filter(image => {
             const imageExist = images.some(oldImage => oldImage.assetId === image.assetId)
             return !imageExist
         })
 
-        const imagesUpdated = [...newImagesWithoutRepetition,...images].slice(0,3)
+        const imagesUpdated = [...newImagesWithoutRepetition, ...images].slice(0, 3)
         setImages(imagesUpdated)
     }
 
-    function deleteImage(imageId: string){
+    function deleteImage(imageId: string) {
         const imageWithoutOneImage = images.filter(image => image.assetId !== imageId)
         setImages(imageWithoutOneImage)
     }
 
 
     return (
-         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <VStack flex={1}>
-                <ScrollView 
+                <ScrollView
                     contentContainerStyle={{
                         flexGrow: 1,
                         paddingBottom: 58
                     }}
                     showsVerticalScrollIndicator={false}
                 >
-                    
+
                     <Header
                         title="Criar anúncio"
-                        onScreenNavigate={() => {}}  
+                        onScreenNavigate={() => { }}
                     />
-          
+
                     <VStack marginTop={6} paddingX={6}>
                         <Heading fontSize={'md'}>Imagens</Heading>
                         <Text color={'gray.700'}>
                             Escolha até 3 imagens para mostrar o quando o seu produto é incrível!
                         </Text>
 
-                        <ScrollView 
-                            horizontal 
+                        <ScrollView
+                            horizontal
                             showsHorizontalScrollIndicator={false}
                             marginTop={4}
                         >
                             {
                                 images.map(image => (
-                                    <PhotoCard 
+                                    <PhotoCard
                                         id={image.assetId as string}
                                         key={image.assetId}
                                         deleteImage={deleteImage}
                                         imageUrl={image.uri}
                                         openPhotoModal={openPhotoModal}
-                                        
+
                                     />
-                                ) )
+                                ))
                             }
-                            
-                            
+
+
                             {
                                 images.length < 3 && (
                                     <AddPhotoButton
-            
+
                                         handleAddImages={updateImages}
                                     />
                                 )
                             }
-                        </ScrollView> 
+                        </ScrollView>
 
 
                         <VStack marginTop={6}>
                             <Heading fontSize={'md'}>Sobre o produto</Heading>
                             <TextArea.Root marginTop={'4'}>
-                                <TextInput.Input placeholder="Título do anúncio" /> 
+                                <TextInput.Input placeholder="Título do anúncio" />
                             </TextArea.Root>
 
                             <TextInput.Root marginTop={'4'}>
-                                <TextArea.TextArea 
+                                <TextArea.TextArea
                                     placeholder="Fale um Sobre o produto"
                                 />
                             </TextInput.Root>
 
-                            <Radio.Group 
-                                defaultValue="new" 
-                                width={'full'} 
+                            <Radio.Group
+                                defaultValue="new"
+                                width={'full'}
                                 name="position"
                             >
                                 <HStack
                                     marginTop={'4'}
-                                    width={'full'} 
+                                    width={'full'}
                                     colorScheme={'purple'}
                                     justifyContent={'space-between'}
                                 >
-                                    <Radio 
-                                        value="new" 
+                                    <Radio
+                                        value="new"
                                         _checked={{
                                             borderColor: 'blue.400',
-                                            
+
                                         }}
                                         colorScheme={'blue'}
                                     >
@@ -160,7 +161,7 @@ export function CreateAnnouncement(){
                                 Venda
                             </Heading>
                             <TextInput.Root marginTop={4}>
-                                <HStack 
+                                <HStack
                                     alignItems={'center'}
                                     backgroundColor={'gray.100'}
                                     rounded={'md'}
@@ -172,7 +173,7 @@ export function CreateAnnouncement(){
                                         color={'gray.900'}
                                     >R$
                                     </Text>
-                                    <TextInput.Input 
+                                    <TextInput.Input
                                         flex={1}
                                         _focus={{
                                             borderWidth: '0'
@@ -191,7 +192,7 @@ export function CreateAnnouncement(){
                                 <Switch onTrackColor={'blue.400'} onChange={() => { }} />
                             </VStack>
                             <VStack marginTop={6}>
-                                <Heading  fontSize={'sm'}>Meios de pagamento aceitos</Heading>
+                                <Heading fontSize={'sm'}>Meios de pagamento aceitos</Heading>
                                 <CheckBox
                                     label="Boleto"
                                     value="Boleto"
@@ -220,7 +221,7 @@ export function CreateAnnouncement(){
                         </VStack>
 
                     </VStack>
-                  
+
                 </ScrollView>
                 <HStack
                     backgroundColor={'white'}
@@ -230,7 +231,7 @@ export function CreateAnnouncement(){
                     paddingBottom={4}
                 >
                     <Button variant="secundary" width={'48%'}>Cancelar </Button>
-                    <Button 
+                    <Button
                         onPress={openProductConfirmationModal}
                         width={'48%'}
                     >Avançar </Button>
@@ -255,6 +256,6 @@ export function CreateAnnouncement(){
             </VStack>
 
 
-         </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
     )
 }

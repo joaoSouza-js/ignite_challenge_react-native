@@ -1,7 +1,7 @@
 import {VStack,HStack, Icon, useTheme,Button as NativeBaseButton, IconButton, Box, FlatList} from 'native-base'
 import React, { useCallback, useMemo, useRef } from 'react';
 import BottomSheet from '@gorhom/bottom-sheet';
-
+import {NativeStackScreenProps} from '@react-navigation/native-stack'
 import { Avatar } from '@components/Avatar'
 import { Text } from '@components/Text'
 import { Button } from '@components/Button'
@@ -11,17 +11,17 @@ import { TextInput } from '@components/TextInput'
 import { Keyboard, TouchableWithoutFeedback } from 'react-native'
 import { Card } from '@components/Card'
 import { FilterModal } from './components/FilterModal';
+import {useNavigation} from '@react-navigation/native'
+import { AppNavigatorRoutesProps } from '@routes/app';
+
 
 export function Home(){
     const {colors} = useTheme()
     const bottomSheetRef = useRef<BottomSheet>(null);
+    const navigation = useNavigation<AppNavigatorRoutesProps>()
 
     
 
-    
-    const handleSheetChanges = useCallback((index: number) => {
-        console.log('handleSheetChanges', index);
-    }, []);
 
     function handleOpenFilterModal(){
         bottomSheetRef.current?.expand()
@@ -34,6 +34,16 @@ export function Home(){
         Keyboard.dismiss()
        
     }
+
+    function handleNavigateToCreateAnnouncementScreen(){
+        navigation.navigate('CreateAnnouncement')
+    }
+    function handleNavigateToAnnouncementDetailsScreen() {
+        navigation.navigate('AnnouncementDetails')
+    }
+
+
+
 
     return (
         <TouchableWithoutFeedback onPress={handleClosedKeyboard}>
@@ -50,6 +60,7 @@ export function Home(){
                         width={145}
                         leftIcon={<Plus size={20} color={colors.white}/>}
                         variant='primary' 
+                        onPress={handleNavigateToCreateAnnouncementScreen}
                     >
                         Criar anúncio
                     </Button>
@@ -140,7 +151,10 @@ export function Home(){
                     keyExtractor={key => key}
                 
                     renderItem={() => (
-                        <Card isUsed name='Tênis vermelho' price='200'/>
+                        <Card 
+                            onPress={handleNavigateToAnnouncementDetailsScreen}
+                            isUsed name='Tênis vermelho' price='200'
+                        />
 
                     )}
                 />

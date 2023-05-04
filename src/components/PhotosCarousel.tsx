@@ -12,7 +12,7 @@ interface PhotosCarouselProps  {
 
 export function PhotosCarousel({images,isDisabled=false}: PhotosCarouselProps){
 
-    const screenWidth = Dimensions.get('screen').width;
+    const screenWidth = Dimensions.get('window').width;
 
     return (
         <GestureHandlerRootView>

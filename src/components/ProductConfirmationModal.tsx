@@ -4,7 +4,6 @@ import { ArrowLeft, Tag } from "phosphor-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {  Center, HStack, VStack, useTheme } from "native-base";
 
-import { ImageProps } from "./AddPhotoButton";
 
 import { paymentsForm } from "@utils/paymets";
 
@@ -13,6 +12,7 @@ import { Avatar } from "@components/Avatar";
 import { Button } from "@components/Button";
 import { Heading } from "@components/Heading";
 import { PhotosCarousel } from "@components/PhotosCarousel";
+import { ImageProps } from './AddPhotoButton';
 
 
 interface ProductConfirmationModal extends ModalProps {
