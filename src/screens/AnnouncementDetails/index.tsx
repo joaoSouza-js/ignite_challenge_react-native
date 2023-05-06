@@ -1,7 +1,7 @@
 import { Dimensions ,ImageBackground } from 'react-native';
 import Carousel from "react-native-reanimated-carousel";
 import { ArrowLeft, Bank, Barcode, CreditCard, Money, QrCode, WhatsappLogo } from "phosphor-react-native";
-import { Box, HStack, IconButton, ScrollView, VStack, useTheme } from "native-base";
+import { HStack, IconButton, ScrollView, VStack, useTheme } from "native-base";
 
 import { Text } from "@components/Text";
 import { Button } from "@components/Button";

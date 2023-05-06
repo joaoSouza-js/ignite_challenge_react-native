@@ -1,8 +1,11 @@
 import { useState } from "react";
 import * as ImagePicker from 'expo-image-picker';
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {PencilSimpleLine} from 'phosphor-react-native'
-import { ScrollView, VStack,Box, Center } from 'native-base'
+import { ScrollView, VStack,Box, Center, useToast } from 'native-base'
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
+import uuid from 'react-native-uuid';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import Logo from '@assets/logo.svg'
@@ -14,11 +17,91 @@ import { Heading } from "@components/Heading";
 import { TextInput } from "@components/TextInput";
 
 import { AuthRoutesParamList } from "@routes/authRoutes";
+import { z } from "zod";
+import { PasswordRegex } from "@utils/regex";
+import { api } from "@libs/axios";
+import { AppError } from "@utils/AppError";
+import { useAuth } from "@hooks/useAuth";
 
+const { Regex: passWordRegex, passwordErrorMessage } = PasswordRegex
+
+const newUserSchema = z.object({
+    name: z.string({ required_error: 'Informe o Nome' }).min(3, 'O nome Tem que possuir mais de 2 letras'),
+    email: z.string({ required_error: 'Informe o seu email'}).email('Informe um email válido').toLowerCase().trim(),
+    phone: z.string({required_error: 'Informe o seu Número de Telefone'}).min(11, 'O telefone deve conter 11 digitos'),
+    password: z.string({required_error: 'Informe uma Nova Senha'}).regex(passWordRegex, passwordErrorMessage).transform(data => data.trim()),
+    confirmPassword: z.string().optional().transform(data => data && data.trim())
+
+}).superRefine((schemaData, context) => {
+    if (schemaData.password !== schemaData.confirmPassword) {
+        context.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["confirmPassword"],
+            message: "As senhas não coincidem",
+        })
+    }
+})
+
+type NewUserFormData = z.infer<typeof newUserSchema>
+
+interface UserPhotoProps {
+    name:   string,
+    uri:    string,
+    type:   string,
+}
 
 export function SignUp({navigation }: NativeStackScreenProps<AuthRoutesParamList,'SignUp'>){
-    const [userPhoto, setUserPhoto] = useState < string | undefined>(undefined)
+    const [userPhoto, setUserPhoto] = useState<UserPhotoProps | undefined>(undefined)
+    const {signIn} = useAuth()
+    const { handleSubmit, formState, control } = useForm<NewUserFormData>({
+        resolver: zodResolver(newUserSchema)
+    })
+    const Toast = useToast()
+    const { errors, isSubmitting } = formState
 
+    async function handleCreateNewUser(formData: NewUserFormData) {
+       if(!userPhoto){
+            return Toast.show({
+                title: 'Selecione uma foto de perfil',
+                placement: 'top',
+                backgroundColor: 'red.500',
+            })
+       }
+       try {
+           const newUserForm = new FormData()
+          
+           newUserForm.append('name', formData.name)
+           newUserForm.append('email', formData.email)
+           newUserForm.append('tel', formData.phone)
+           newUserForm.append('password', formData.password)
+           newUserForm.append('avatar', userPhoto as any)
+
+           await api.post('/users', newUserForm, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+           })
+
+          await signIn(formData.email, formData.password)
+        
+       } catch (error) {
+          const isAppError = error instanceof AppError
+
+
+           Toast.show({
+               title: isAppError ? error.message : 'Ocorreu um erro ao criar o usuário',
+               placement: 'top',
+               backgroundColor: 'red.500',
+           })
+
+           
+       }
+
+
+
+
+
+    }
 
     function handleNavigateToSignInScreen() {
         navigation.navigate('SignIn')
@@ -35,7 +118,17 @@ export function SignUp({navigation }: NativeStackScreenProps<AuthRoutesParamList
         if(imageResponse.canceled) return;
 
         if(imageResponse.assets[0]){
-            setUserPhoto(imageResponse.assets[0].uri)
+            const  fileExtension = imageResponse.assets[0].uri.split('.').pop()
+            const photoFileName = `${uuid.v4()}.${fileExtension}`.toLowerCase()
+
+            const file: UserPhotoProps   = {
+                name: photoFileName,
+                uri: imageResponse.assets[0].uri,
+                type: `${imageResponse.assets[0].type}/${fileExtension}`
+            }
+            console.log(file)
+
+            setUserPhoto(file)
         }
     }
 
@@ -59,8 +152,8 @@ export function SignUp({navigation }: NativeStackScreenProps<AuthRoutesParamList
 
                     <Center marginTop={8}>
                         <Avatar.Root>
-                            {!userPhoto 
-                                ? <Avatar.Avatar source={{ uri: userPhoto }} />
+                            {userPhoto 
+                                ? <Avatar.Avatar source={{ uri: userPhoto.uri }} />
                                 : <Avatar.AvatarSkeleton/>
                             }
                          
@@ -74,38 +167,60 @@ export function SignUp({navigation }: NativeStackScreenProps<AuthRoutesParamList
 
                     <VStack marginTop={6}>
                         <TextInput.Root>
-                            <TextInput.Input
-                             
+                            <TextInput.InputControlled
+                                name="name"
+                                control={control}
                                 placeholder="Nome"
                             />
+                            {errors.name && <TextInput.Error>{errors.name.message}</TextInput.Error>}
                         </TextInput.Root >
 
                         <TextInput.Root marginTop={4}>
-                            <TextInput.Input
+                            <TextInput.InputControlled
+                                name="email"
+                                control={control}
                                 placeholder="Email"
                             />
+                            {errors.email && <TextInput.Error>{errors.email.message}</TextInput.Error>}
                         </TextInput.Root>
 
                         <TextInput.Root marginTop={4}>
-                            <TextInput.Input 
-                                placeholder="Phone" 
-                                keyboardType="name-phone-pad"
+                            <TextInput.InputControlled
+                                name="phone"
+                                control={control} 
+                                placeholder="Telefone" 
+
+                                keyboardType="phone-pad"
                             />
+                            {errors.phone && <TextInput.Error>{errors.phone.message}</TextInput.Error>}
                         </TextInput.Root>
 
                         <TextInput.Root marginTop={4}>
-                            <TextInput.PasswordInput
+                            <TextInput.PasswordInputControlled
+                                name="password"
+                                control={control}
                                 placeholder="Senha"
                             />
+                            {errors.password && <TextInput.Error>{errors.password.message}</TextInput.Error>}
                         </TextInput.Root>
 
                         <TextInput.Root marginTop={4}>
-                            <TextInput.PasswordInput
+                            <TextInput.PasswordInputControlled
+                                name="confirmPassword"
+                                control={control}
+                                onSubmitEditing={handleSubmit(handleCreateNewUser)}
                                 placeholder="Confirme a Senha"
                             />
+                            {errors.confirmPassword && <TextInput.Error>{errors.confirmPassword.message}</TextInput.Error>}
                         </TextInput.Root>
 
-                        <Button marginTop={6}>Criar</Button>
+                        <Button 
+                            isLoading={isSubmitting}
+                            onPress={handleSubmit(handleCreateNewUser)}
+                            marginTop={6}
+                        >
+                            Criar
+                        </Button>
                     </VStack>
 
                     <Box flexGrow={1} marginTop={6}>

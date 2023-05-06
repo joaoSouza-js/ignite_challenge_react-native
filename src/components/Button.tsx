@@ -26,6 +26,9 @@ export function Button({ variant='primary', ...props }: ButtonProps){
                         color: 'gray.100'
                     }
                 }}
+                _pressed={{
+                    opacity: 0.8,
+                }}
                 {...props}
             />
         )
@@ -51,6 +54,9 @@ export function Button({ variant='primary', ...props }: ButtonProps){
                 _spinner: {
                     color: variant === 'primary' ? 'gray.100' : 'gray.700',
                 }
+            }}
+            _pressed={{
+                opacity: 0.8,
             }}
             {...props}
         />

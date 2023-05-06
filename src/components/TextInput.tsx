@@ -3,6 +3,7 @@ import {ComponentProps, ReactNode, useState} from 'react'
 import {Text} from '@components/Text'
 import { Entypo } from '@expo/vector-icons'
 import { Eye, EyeSlash} from 'phosphor-react-native'
+import { Control, Controller } from 'react-hook-form'
 
 type VStackProps = ComponentProps<typeof VStack>
 
@@ -45,8 +46,14 @@ Input.displayName = 'Input'
 
 
 
-function PasswordInput(props: IInputProps){
-    const [passWordIsHiding,setPassWordIsHiding] = useState(true)
+interface PasswordInputProps extends IInputProps {
+    visible?: boolean
+}
+
+function PasswordInput({visible=true, ...rest}: PasswordInputProps){
+
+    const [passWordIsHiding, setPassWordIsHiding] = useState(visible)
+
     const { colors} = useTheme()
     function handleChangePasswordVisibility(){
         setPassWordIsHiding(!passWordIsHiding)
@@ -67,27 +74,82 @@ function PasswordInput(props: IInputProps){
                 }
               </IconButton>
             }
-            {...props}
+            {...rest}
         />
     )
 }
 
 PasswordInput.displayName = 'PasswordInput'
 
-function TextInputError(){
+
+interface TextInputErrorProps {
+    children: string | number | undefined
+}
+function TextInputError({children}: TextInputErrorProps){
+    
     return (
         <Text
             marginTop={2}
             color={'red.400'}
             fontSize={'xs'}
-        />
+        >{children}</Text>
     )
 }
 TextInputError.displayName = 'TextInputError'
+
+
+interface ITextInputControlledProps extends IInputProps {
+    name: string,
+    control: Control<any>
+}
+
+function InputControlled({ name, control, ...rest }: ITextInputControlledProps){
+    return (
+        <Controller
+            name={name}
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                    onChangeText={onChange}
+                    value={value}
+                    onBlur={onBlur}
+                    {...rest}
+                />
+            )}
+        />
+        
+    ) 
+}
+
+InputControlled.displayName = 'InputControlled'
+
+function PasswordInputControlled({ name, control, ...rest }: ITextInputControlledProps){
+
+    return (
+        <Controller
+            name={name}
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+                <PasswordInput
+                    onChangeText={onChange}
+                    value={value}
+                    onBlur={onBlur}
+                    {...rest}
+                />
+            )}
+        />
+        
+    )
+}
+
+PasswordInputControlled.displayName = 'PasswordInputControlled'
+
 
 export const TextInput = {
     Root: TextInputRoot,
     Input: Input,
     Error: TextInputError,
-    PasswordInput: PasswordInput
+    PasswordInput: PasswordInput,
+    InputControlled: InputControlled,
+    PasswordInputControlled: PasswordInputControlled
 }
