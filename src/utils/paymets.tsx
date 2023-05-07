@@ -13,20 +13,20 @@ export const paymentsForm = [
     },
 
     {
-        name: 'creditcard',
+        name: 'card',
         label: 'Cartão de Crédito',
         Icon: (props?: IconProps) => (<CreditCard {...props} />)
     },
 
     {
-        name: 'money',
+        name: 'cash',
         label: 'Dinheiro',
         Icon: (props?: IconProps) => (<Money {...props} />)
     },
 
 
     {
-        name: 'backDeposit',
+        name: 'deposit',
         label: 'Depósito Bancário',
         Icon: (props?: IconProps) => (<Bank {...props} />)
     },

@@ -1,6 +1,7 @@
 import {ITextAreaProps, VStack, TextArea as NativeBaseTextArea} from 'native-base'
 import {ComponentProps, ReactNode, useState} from 'react'
 import {Text} from '@components/Text'
+import { Control, Controller } from 'react-hook-form'
 
 
 type VStackProps = ComponentProps<typeof VStack>
@@ -43,14 +44,44 @@ function TextAreaArea(props: ITextAreaProps) {
 
 TextAreaArea.displayName = 'TextAreaArea'
 
+interface ITextInputControlledProps extends ITextAreaProps {
+    name: string,
+    control: Control<any>
+}
 
-function TextAreaError(){
+function TextAreaControled({ name, control, ...rest }: ITextInputControlledProps) {
+    return (
+        <Controller
+            name={name}
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+                <TextAreaArea
+                    onChangeText={onChange}
+                    value={value}
+                    onBlur={onBlur}
+                    {...rest}
+                />
+            )}
+        />
+
+    )
+}
+
+TextAreaControled.displayName = 'TextAreaControled'
+
+interface TextAreaErrorProps {
+    children: string | number | undefined
+}
+
+function TextAreaError({children}: TextAreaErrorProps){
     return (
         <Text
             marginTop={2}
             color={'red.400'}
             fontSize={'xs'}
-        />
+        >
+            {children}
+        </Text>
     )
 }
 TextAreaError.displayName = 'TextAreaError'
@@ -58,5 +89,6 @@ TextAreaError.displayName = 'TextAreaError'
 export const TextArea = {
     Root: TextAreaRoot,
     TextArea: TextAreaArea,
+    TextAreaControled: TextAreaControled,
     Error: TextAreaError,
 }

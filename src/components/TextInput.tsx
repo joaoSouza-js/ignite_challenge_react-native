@@ -1,7 +1,6 @@
 import { Input as NativeBaseInput, IInputProps, VStack, IconButton, useTheme} from 'native-base'
 import {ComponentProps, ReactNode, useState} from 'react'
 import {Text} from '@components/Text'
-import { Entypo } from '@expo/vector-icons'
 import { Eye, EyeSlash} from 'phosphor-react-native'
 import { Control, Controller } from 'react-hook-form'
 
@@ -110,7 +109,7 @@ function InputControlled({ name, control, ...rest }: ITextInputControlledProps){
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                    onChangeText={onChange}
+                    onChangeText={value => onChange(isNaN(Number(value)) ? value : Number(value)) }
                     value={value}
                     onBlur={onBlur}
                     {...rest}
