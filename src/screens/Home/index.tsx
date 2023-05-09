@@ -13,13 +13,15 @@ import { Card } from '@components/Card'
 import { FilterModal } from './components/FilterModal';
 import {useNavigation} from '@react-navigation/native'
 import { AppNavigatorRoutesProps } from '@routes/app';
+import { useAuth } from '@hooks/useAuth';
+import { api } from '@libs/axios';
 
 
 export function Home(){
     const {colors} = useTheme()
     const bottomSheetRef = useRef<BottomSheet>(null);
     const navigation = useNavigation<AppNavigatorRoutesProps>()
-
+    const {user} = useAuth()
     
 
 
@@ -42,6 +44,8 @@ export function Home(){
         navigation.navigate('AnnouncementDetails')
     }
 
+    
+
 
 
 
@@ -49,7 +53,7 @@ export function Home(){
         <TouchableWithoutFeedback onPress={handleClosedKeyboard}>
             <VStack paddingX={6} flex={1}>
                 <HStack alignItems={'center'} marginTop={9} width={'full'} >
-                    <Avatar.Avatar borderWidth={2} size={11}/>
+                    <Avatar.Avatar source={{ uri: `${api.defaults.baseURL}/images/${user.avatar}` }} borderWidth={2} size={11}/>
 
                     <VStack flex={1} marginLeft={3} >
                         <Text fontSize={'md'}>Boas vindas,</Text>

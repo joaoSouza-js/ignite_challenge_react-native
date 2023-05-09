@@ -189,8 +189,7 @@ export function SignUp({navigation }: NativeStackScreenProps<AuthRoutesParamList
                                 name="phone"
                                 control={control} 
                                 placeholder="Telefone" 
-
-                                keyboardType="phone-pad"
+                                
                             />
                             {errors.phone && <TextInput.Error>{errors.phone.message}</TextInput.Error>}
                         </TextInput.Root>

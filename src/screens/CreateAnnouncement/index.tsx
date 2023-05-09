@@ -248,7 +248,7 @@ export function CreateAnnouncement(){
                                     paymentMethods.map((paymentMethod,index) => (
                                     <Controller
                                         control={control}
-                                       
+                                        key={index}
                                         name={`paymentMethods.${index}.isChecked`}
                                         render={({ field: { onChange, value } }) => (
                                             <CheckBox
@@ -311,7 +311,7 @@ export function CreateAnnouncement(){
                     visible={ProductConfirmationModalIsVisible}
                     name={productInformations.name}
                     acceptTrade={productInformations.acceptTrade}
-                    isUsed={false}
+                    isNew={productInformations.isNew}
                     acceptPaymentsForm={productInformations.paymentMethods ? productInformations.paymentMethods.map(paymentMethod => paymentMethod.name): []}
                     description={productInformations.description}
                     price={productInformations.price}

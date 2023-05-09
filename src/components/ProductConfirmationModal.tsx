@@ -1,8 +1,9 @@
+import uuid from 'react-native-uuid';
 import { ScrollView } from 'react-native';
 import { Modal, ModalProps} from 'react-native'
 import { ArrowLeft, Tag } from "phosphor-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {  Center, HStack, VStack, useTheme } from "native-base";
+import {  Center, HStack, VStack, useTheme, useToast } from "native-base";
 
 
 import { paymentsForm } from "@utils/paymets";
@@ -13,6 +14,9 @@ import { Button } from "@components/Button";
 import { Heading } from "@components/Heading";
 import { PhotosCarousel } from "@components/PhotosCarousel";
 import { ImageProps } from './AddPhotoButton';
+import { api } from '@libs/axios';
+import { useState } from 'react';
+import { AppError } from '@utils/AppError';
 
 
 interface ProductConfirmationModal extends ModalProps {
@@ -22,7 +26,7 @@ interface ProductConfirmationModal extends ModalProps {
     price: number | string;
     description: string;
     acceptTrade: boolean;
-    isUsed: boolean;
+    isNew: boolean;
     acceptPaymentsForm: string[]
 }
 
@@ -34,17 +38,74 @@ export function ProductConfirmationModal(
         description, 
         name,  
         price,
-        isUsed,
+        isNew,
         acceptPaymentsForm,
          ...rest
     }: ProductConfirmationModal){
 
     const {colors} = useTheme()
     const imagesWithOnlyUri  = images.map(image  => image.uri)
+    const [appIsLoading, setAppIsLoading] = useState(false)
     const acceptPayments = paymentsForm.filter(payment =>{
         const PaymentExist = acceptPaymentsForm.some(paymentForm => paymentForm === payment.name )
         return PaymentExist
     })
+    const Toast = useToast()
+
+    async function handleConfirmProduct(){
+        try {
+            setAppIsLoading(true)
+            const productResponse = await api.post<{id:string}>('/products', {
+                name: name,
+                description: description,
+                is_new: isNew ,
+                price: price as number * 100,
+                accept_trade: acceptTrade,
+                payment_methods: acceptPaymentsForm
+            })
+            
+            const imagesFormated = images.map(image => {
+                const fileExtension = image.uri.split('.').pop()
+                const photoFileName = `${uuid.v4()}.${fileExtension}`.toLowerCase()
+    
+                const imageFormated = {
+                    name: photoFileName,
+                    uri: image.uri,
+                    type: `${image.type}/${fileExtension}`
+                }
+                return imageFormated
+            })
+
+            const photosForm = new FormData()
+
+            photosForm.append('images', imagesFormated[0] as any)
+
+
+            imagesFormated.forEach((image) => {
+                photosForm.append('images', image as any);
+            })
+            
+            photosForm.append('product_id', productResponse.data.id)
+    
+            const photosResponse = await api.post('/products/images', photosForm, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+
+            console.log(photosResponse.data)
+        } catch (error) {
+            const isAppError = error instanceof AppError
+            Toast.show({
+                title: isAppError ? error.message : 'Ocorreu um erro ao criar o produto',
+            })
+            setAppIsLoading(false)   
+        }
+        finally{
+            setAppIsLoading(false)
+        }
+        
+    }
 
     return (
         <Modal animationType="fade" {...rest} statusBarTranslucent >
@@ -98,16 +159,16 @@ export function ProductConfirmationModal(
                             width={14}
                             paddingY={'px'}
 
-                            backgroundColor={isUsed ? 'gray.400': 'blue.400'}
+                            backgroundColor={isNew ?  'blue.400': 'gray.400'}
                             rounded={'full'}
 
                         >
                             <Text
                                 fontSize={'xs'}
                                 fontFamily={'heading'}
-                                color={isUsed ? 'gray.700' : 'gray.100'}
+                                color={isNew ?'gray.100' : 'gray.700' }
                             >
-                                {isUsed ? 'Usado': 'Novo'}
+                                {isNew ? 'Novo' : 'Usado'}
                                 
                             </Text>
                         </Center>
@@ -174,6 +235,8 @@ export function ProductConfirmationModal(
                         </Button>
                         <Button 
                             variant="tertiary"
+                            onPress={handleConfirmProduct}
+                            isLoading={appIsLoading}
                             leftIcon={<Tag size={20} color={colors.white} />}
                             width={'48%'}
                         >Publicar 
