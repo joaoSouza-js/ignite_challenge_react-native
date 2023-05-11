@@ -1,6 +1,6 @@
 import { api } from "@libs/axios";
-import { getUserInLocalStorage, SaveUserInLocalSotorage } from "@storage/storageUser";
-import { getAuthTokensInLocalStorage, SaveTokensInLocalStorage } from "@storage/tokens";
+import { getUserInLocalStorage, removeUserInLocalStorage, SaveUserInLocalSotorage } from "@storage/storageUser";
+import { getAuthTokensInLocalStorage, removeTokenInLocalStorage, SaveTokensInLocalStorage } from "@storage/tokens";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { AUTH_TOKENS_DTO } from "src/DTO/authTokensDTO";
 import { USER_DTO } from "src/DTO/userDTO";
@@ -37,6 +37,11 @@ export function AuthContextProvider({children}: AuthContextProviderProps){
     function SaveUser(user: USER_DTO){
         SaveUserInLocalSotorage(user)
         setUser(user)
+    }
+    function removeUser(){
+        setUser({} as USER_DTO)
+        removeUserInLocalStorage()
+        removeTokenInLocalStorage()
     }
 
     async function fetchUserDatas(){

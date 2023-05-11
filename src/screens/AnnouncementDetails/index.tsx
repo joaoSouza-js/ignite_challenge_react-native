@@ -1,29 +1,65 @@
-import { Dimensions ,ImageBackground } from 'react-native';
-import Carousel from "react-native-reanimated-carousel";
-import { ArrowLeft, Bank, Barcode, CreditCard, Money, QrCode, WhatsappLogo } from "phosphor-react-native";
+
+import { useQuery } from '@tanstack/react-query';
+import { ArrowLeft, WhatsappLogo } from "phosphor-react-native";
+import {NativeStackScreenProps } from '@react-navigation/native-stack'
 import { HStack, IconButton, ScrollView, VStack, useTheme } from "native-base";
 
 import { Text } from "@components/Text";
 import { Button } from "@components/Button";
 import { Avatar } from "@components/Avatar";
 import { Heading } from "@components/Heading";
-import { PhotosMarkIndicator } from '@components/photosIndicator';
+import { PhotosCarousel } from '@components/PhotosCarousel';
 
-export function AnnouncementDetails(){
-    const annoucementPhotos = [
-        'https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1112&q=100',
-        'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80',
-        'https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1112&q=100',
-        'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80',
+import { api } from '@libs/axios';
+import { AppRouteParamList } from '@routes/app';
+import { ProductsProps } from 'src/DTO/productDTO';
 
-    ]
-    const screenWidth = Dimensions.get('screen').width;
+import { imageBaseUrl } from '@utils/ImageBaseUrl';
+import { paymentsForm } from '@utils/paymets';
 
-    const {colors} = useTheme()
+interface ProductUserProps extends ProductsProps {
+    description: string;
+    user: {
+        avatar: string;
+        name: string;
+        tel:  string
+
+    }
+}
+
+export function AnnouncementDetails({route: {params},navigation }: NativeStackScreenProps<AppRouteParamList, 'AnnouncementDetails' >){
+  
+   
+    const { colors } = useTheme()
+
+    const {data: product} = useQuery<ProductUserProps>(['productDetais', params.productId], async () => {
+        const response = await api.get<ProductUserProps>(`/products/${params.productId}`)
+
+        return response.data
+    })
+
+    const annoucementPhotosUrl =  product?.product_images.map(productImage => {
+        const imageUrl = `${imageBaseUrl}/${productImage.path}`
+        return imageUrl
+    }) || []
+
+    const acceptPayments =  paymentsForm.filter(payment => {
+        if (!product?.payment_methods) return false
+
+        const PaymentFormExist = product.payment_methods.some(paymentForm => paymentForm.key === payment.name)
+
+        return PaymentFormExist
+    }) 
+
+    
+  
+
+    
     
     return (
         <VStack flex={1}>
             <IconButton
+                onPress={() => navigation.goBack()}
                 variant={'unstyled'}
                 marginLeft={2} 
                 marginBottom={3} 
@@ -37,28 +73,8 @@ export function AnnouncementDetails(){
                 <ArrowLeft color="black" size={24}/>
             </IconButton>
            
-            <Carousel
-                loop
-                width={screenWidth}
-                height={280}
-                data={annoucementPhotos}
-                scrollAnimationDuration={300}
-                renderItem={({ item, index})=> (
-                    <ImageBackground
-                        key={index} 
-                        resizeMode="cover"
-                        source={{uri: item}}
-                        alt=""
-                        style={{
-                            height: '100%',
-                            justifyContent: 'flex-end',
-                            flex: 1
-                        }}
-                    >
-                        <PhotosMarkIndicator length={annoucementPhotos.length} current={index} />
-                    </ImageBackground>
-                
-                )}
+            <PhotosCarousel
+                images={annoucementPhotosUrl}
             />
      
             <ScrollView contentContainerStyle={{padding: 24}}>
@@ -67,14 +83,14 @@ export function AnnouncementDetails(){
                         size={6}  
                         borderWidth={2} 
                         source={{
-                            uri: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80',
+                            uri: `${imageBaseUrl}/${product?.user.avatar}`,
                          }} 
                     />
                     <Text 
                         color={'gray.900'}
                         marginLeft={'2'}
                     >
-                        Makenna Baptista
+                        {product?.user.name}
                     </Text>
                 </HStack>
                 <VStack marginTop={6}>
@@ -99,7 +115,7 @@ export function AnnouncementDetails(){
                         alignItems={'center'} 
                         justifyContent={'space-between'}
                     >
-                        <Heading>Bicicleta</Heading>
+                        <Heading>{product?.name}</Heading>
                         <Text
                             color={'blue.500'}
                             fontFamily={'heading'}
@@ -108,44 +124,29 @@ export function AnnouncementDetails(){
                             <Text color={'blue.500'} fontFamily={'heading'}>
                                 R$ 
                             </Text> 
-                            120,00
+                            {product!?.price  / 100}
                         </Text>
 
                     </HStack>
-                    <Text marginTop={2} >
-                        Cras congue cursus in tortor sagittis placerat nunc, tellus arcu. Vitae ante leo eget maecenas urna mattis cursus. Mauris metus amet nibh mauris mauris accumsan, euismod. Aenean leo nunc, purus iaculis in aliquam.
-                        
-                    </Text>
+                    <Text marginTop={2} >{product?.description}</Text>
                 </VStack>
 
                 <HStack marginTop={6}>
                     <Text fontFamily={'heading'}>Aceita troca? </Text>
-                    <Text>{' '}Sim</Text>
+                    <Text>{' '}{product?.accept_trade ? 'Sim' : 'Não'}</Text>
                 </HStack>
 
                 <VStack marginTop={6} >
                     <Heading marginTop={2}>Meios de pagamento:</Heading>
-                    <HStack alignItems={'center'}> 
-                        <Barcode color={colors.gray[900]} size={20} /> 
-                        <Text marginLeft={2} >Boleto </Text>
-                    </HStack>
-                    <HStack alignItems={'center'} marginTop={1}>
-                        <QrCode color={colors.gray[900]} size={20}  />
-                        <Text marginLeft={2} >Pix </Text>
-                    </HStack>
-                    <HStack alignItems={'center'} marginTop={1}>
-                        <Money  color={colors.gray[900]} size={20} />
-                        <Text marginLeft={2} >Dinheiro </Text>
-                    </HStack>
-                    <HStack alignItems={'center'} marginTop={1}>
-                        <CreditCard  color={colors.gray[900]} size={20} />
-                        <Text marginLeft={2} >Cartão de Crédito </Text>
-                    </HStack>
-                    <HStack alignItems={'center'} marginTop={1}>
-                        <Bank color={colors.gray[900]} size={20}  />
-                        <Text marginLeft={2} >Depósito Bancário </Text>
-                    </HStack>
-                    
+                    {
+                        acceptPayments.map(({ Icon, label, name }) => (
+                            <HStack marginTop={1} key={name} alignItems={'center'}>
+                                <Icon color={colors.gray[900]} size={20} />
+                                <Text marginLeft={2} >{label} </Text>
+                            </HStack>
+
+                        ))
+                    }
                 </VStack>
 
             </ScrollView>

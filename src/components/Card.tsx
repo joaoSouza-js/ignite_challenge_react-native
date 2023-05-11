@@ -1,17 +1,19 @@
-import { Pressable, Image, Box, HStack, IPressableProps, VStack } from 'native-base'
-import {ImageBackground} from 'react-native'
-import { Avatar } from './Avatar'
 import { Text } from './Text'
-import { Heading } from './Heading'
+import { Avatar } from './Avatar'
+import { Pressable, Image, Box, HStack, IPressableProps, VStack } from 'native-base'
+
 
 interface CardProps extends IPressableProps {
-    isUsed: boolean,
+    IsNew: boolean,
     isDeprecated?: boolean
     name: string,
-    price: string
+    price: string,
+    productUrl: string,
+    userAvatarUrl: string,
 }
 
-export function Card({ isUsed, isDeprecated=false, name, price, ...rest}:CardProps){
+export function Card({ IsNew, isDeprecated = false, name, price, productUrl, userAvatarUrl, ...rest}:CardProps){
+    console.log(productUrl)
     return (
         <VStack 
       
@@ -38,14 +40,21 @@ export function Card({ isUsed, isDeprecated=false, name, price, ...rest}:CardPro
                     width={'full'}
                     height={100}
                     position={'absolute'}
-                    source={{ uri:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=100'}}
+                    resizeMode='contain'
+                    source={{ uri: productUrl }}
                 />
                 <HStack
                     justifyContent={'space-between'}
                     height={100}
                     padding={1}
                 >
-                    <Avatar.Avatar borderWidth={2} borderColor={'white'} size={'6'} variant='small'/>
+                    <Avatar.Avatar 
+                        borderWidth={2} 
+                        borderColor={'white'} 
+                        size={'6'} 
+                        source={{ uri: userAvatarUrl }}
+                        variant='small'
+                    />
                     <Box 
                     
                     justifyContent={'center'}
@@ -53,7 +62,7 @@ export function Card({ isUsed, isDeprecated=false, name, price, ...rest}:CardPro
                     
                         paddingX={2}
                         rounded={'full'}
-                        backgroundColor={isUsed ? 'gray.800' : 'blue.500'}
+                        backgroundColor={IsNew ? 'blue.500' : 'gray.800' }
                     >
                         <Text
                             fontFamily={'heading'}
@@ -62,7 +71,7 @@ export function Card({ isUsed, isDeprecated=false, name, price, ...rest}:CardPro
                             color={'white'}
                         
                         >
-                            {isUsed ? 'usado' : 'Novo'}
+                            {IsNew ? 'Novo': 'usado' }
                         </Text>
                     </Box>
                 </HStack>

@@ -109,7 +109,7 @@ function InputControlled({ name, control, ...rest }: ITextInputControlledProps){
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                    onChangeText={value => onChange(isNaN(Number(value)) ? value : Number(value)) }
+                    onChangeText={onChange}
                     value={value}
                     onBlur={onBlur}
                     {...rest}

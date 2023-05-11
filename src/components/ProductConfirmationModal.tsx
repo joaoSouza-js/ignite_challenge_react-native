@@ -17,6 +17,8 @@ import { ImageProps } from './AddPhotoButton';
 import { api } from '@libs/axios';
 import { useState } from 'react';
 import { AppError } from '@utils/AppError';
+import { useNavigation } from '@react-navigation/native';
+import { AppNavigatorRoutesProps } from '@routes/app';
 
 
 interface ProductConfirmationModal extends ModalProps {
@@ -51,6 +53,12 @@ export function ProductConfirmationModal(
         return PaymentExist
     })
     const Toast = useToast()
+
+    const Navigation = useNavigation<AppNavigatorRoutesProps>()
+
+    function handldeGoToHomeScreen(){
+        Navigation.navigate('HomeTabs')
+    }
 
     async function handleConfirmProduct(){
         try {
@@ -92,7 +100,7 @@ export function ProductConfirmationModal(
                     'Content-Type': 'multipart/form-data'
                 }
             })
-
+            handldeGoToHomeScreen()
             console.log(photosResponse.data)
         } catch (error) {
             const isAppError = error instanceof AppError

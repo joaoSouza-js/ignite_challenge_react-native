@@ -1,8 +1,9 @@
-import Carousel from "react-native-reanimated-carousel";
-import { Dimensions, ImageBackground } from 'react-native';
-import { PhotosMarkIndicator } from "./photosIndicator";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Center, VStack } from "native-base";
+import Carousel from "react-native-reanimated-carousel";
+import { PhotosMarkIndicator } from "./photosIndicator";
+import { Dimensions, ImageBackground } from 'react-native';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 import { Heading } from "./Heading";
 
 interface PhotosCarouselProps  {
@@ -37,7 +38,7 @@ export function PhotosCarousel({images,isDisabled=false}: PhotosCarouselProps){
                             <ImageBackground
                                 key={index}
                               
-                                resizeMode="cover"
+                                resizeMode="stretch"
                                 source={{ uri: item }}
                                 alt=""
                                 style={{

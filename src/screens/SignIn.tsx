@@ -107,7 +107,8 @@ export function SignIn({ navigation }: NativeStackScreenProps<AuthRoutesParamLis
                                 )}
                             </TextInput.Root>
 
-                            <Button 
+                            <Button
+                                isLoading={isSubmitting}
                                 onPress={handleSubmit(handleSignIn)}
                                 marginTop={4} 
                                 variant='tertiary'
@@ -127,7 +128,6 @@ export function SignIn({ navigation }: NativeStackScreenProps<AuthRoutesParamLis
                             <Text>Ainda não tem acesso?</Text>
 
                             <Button 
-                                isLoading={isSubmitting}
                                 onPress={handleNavigateToSignUpScreen}
                                 marginTop={4} 
                                 variant='primary'

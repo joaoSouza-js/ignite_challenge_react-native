@@ -187,7 +187,8 @@ export function SignUp({navigation }: NativeStackScreenProps<AuthRoutesParamList
                         <TextInput.Root marginTop={4}>
                             <TextInput.InputControlled
                                 name="phone"
-                                control={control} 
+                                control={control}
+                                keyboardType="phone-pad" 
                                 placeholder="Telefone" 
                                 
                             />

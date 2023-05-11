@@ -8,7 +8,7 @@ import { AnnouncementDetails } from '@screens/AnnouncementDetails'
 export type AppRouteParamList  = {
     HomeTabs: undefined,
     CreateAnnouncement: undefined,
-    AnnouncementDetails: undefined,
+    AnnouncementDetails: {productId: string},
     EditAnnouncement: undefined,
 
 }

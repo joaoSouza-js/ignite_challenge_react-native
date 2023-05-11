@@ -23,9 +23,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const createProductSchemea = z.object({
     name: z.string({ required_error: 'Informe o Nome do Produto'}).min(4,'O nome deve conter no mínimo 4 caracteres'),
     description: z.string({ required_error: 'Informe a Descrição do Produto'}).min(10,'A descrição deve conter no mínimo 10 caracteres'),
-    price: z.number({ required_error: 'Informe o Preço do Produto'}).min(1, 'O preço deve ser maior que 0'),
-    isNew: z.boolean(),
+    price:   z.coerce.number({ required_error: 'Informe o Preço do Produto'}).min(1,'O preço deve ser maior que 0'),
     acceptTrade: z.boolean(),
+    isNew: z.boolean(),
     paymentMethods: z.array(z.object({
         name: z.string(),
         label: z.string(),
@@ -314,7 +314,7 @@ export function CreateAnnouncement(){
                     isNew={productInformations.isNew}
                     acceptPaymentsForm={productInformations.paymentMethods ? productInformations.paymentMethods.map(paymentMethod => paymentMethod.name): []}
                     description={productInformations.description}
-                    price={productInformations.price}
+                    price={productInformations.price as number}
                     closeProductConfirmationModal={closeProductConfirmationModal}
                 />
             </VStack>

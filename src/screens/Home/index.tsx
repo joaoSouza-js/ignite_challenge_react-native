@@ -1,20 +1,28 @@
-import {VStack,HStack, Icon, useTheme,Button as NativeBaseButton, IconButton, Box, FlatList} from 'native-base'
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useRef } from 'react';
 import BottomSheet from '@gorhom/bottom-sheet';
-import {NativeStackScreenProps} from '@react-navigation/native-stack'
-import { Avatar } from '@components/Avatar'
-import { Text } from '@components/Text'
-import { Button } from '@components/Button'
+import { useQuery } from '@tanstack/react-query';
+import {useNavigation} from '@react-navigation/native'
+import { Keyboard, TouchableWithoutFeedback } from 'react-native'
 import { ArrowRight, Faders, MagnifyingGlass, Plus, Tag } from 'phosphor-react-native'
+import {VStack,HStack, useTheme,Button as NativeBaseButton, IconButton, Box, FlatList} from 'native-base'
+
+
+import { Card } from '@components/Card'
+import { Text } from '@components/Text'
+import { Avatar } from '@components/Avatar'
+import { Button } from '@components/Button'
 import { Heading } from '@components/Heading'
 import { TextInput } from '@components/TextInput'
-import { Keyboard, TouchableWithoutFeedback } from 'react-native'
-import { Card } from '@components/Card'
 import { FilterModal } from './components/FilterModal';
-import {useNavigation} from '@react-navigation/native'
-import { AppNavigatorRoutesProps } from '@routes/app';
-import { useAuth } from '@hooks/useAuth';
+
 import { api } from '@libs/axios';
+import { useAuth } from '@hooks/useAuth';
+import { AppNavigatorRoutesProps } from '@routes/app';
+
+import { ProductsProps  } from 'src/DTO/productDTO';
+import { imageBaseUrl } from '../../utils/ImageBaseUrl';
+
+
 
 
 export function Home(){
@@ -22,8 +30,11 @@ export function Home(){
     const bottomSheetRef = useRef<BottomSheet>(null);
     const navigation = useNavigation<AppNavigatorRoutesProps>()
     const {user} = useAuth()
-    
 
+    const { data: products = [] } = useQuery<ProductsProps[]>(['query', 'idsdd'], async () => {
+        const response = await api.get<ProductsProps[]>('/products')
+        return response.data
+    })
 
     function handleOpenFilterModal(){
         bottomSheetRef.current?.expand()
@@ -40,20 +51,15 @@ export function Home(){
     function handleNavigateToCreateAnnouncementScreen(){
         navigation.navigate('CreateAnnouncement')
     }
-    function handleNavigateToAnnouncementDetailsScreen() {
-        navigation.navigate('AnnouncementDetails')
+    function handleNavigateToAnnouncementDetailsScreen(id: string) {
+        navigation.navigate('AnnouncementDetails', { productId: id})
     }
-
     
-
-
-
-
     return (
         <TouchableWithoutFeedback onPress={handleClosedKeyboard}>
             <VStack paddingX={6} flex={1}>
                 <HStack alignItems={'center'} marginTop={9} width={'full'} >
-                    <Avatar.Avatar source={{ uri: `${api.defaults.baseURL}/images/${user.avatar}` }} borderWidth={2} size={11}/>
+                    <Avatar.Avatar source={{ uri: `${imageBaseUrl}/${user.avatar}` }} borderWidth={2} size={11}/>
 
                     <VStack flex={1} marginLeft={3} >
                         <Text fontSize={'md'}>Boas vindas,</Text>
@@ -71,7 +77,7 @@ export function Home(){
                 </HStack>
 
                 <VStack marginTop={8}>
-                    <Text color={'gray.700'}>Seus produtos anunciados para venda </Text>
+                    <Text color={'gray.700'}>texto</Text>
                     <HStack 
                         backgroundColor={'#647AC71A'}
                         alignItems={'center'} marginTop={3}
@@ -151,13 +157,18 @@ export function Home(){
                     }}
                     showsVerticalScrollIndicator={false}
                     numColumns={2}
-                    data={["2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]}
-                    keyExtractor={key => key}
+                    data={products}
+                    keyExtractor={key => key.id}
                 
-                    renderItem={() => (
+                    renderItem={({item: product}) => (
                         <Card 
-                            onPress={handleNavigateToAnnouncementDetailsScreen}
-                            isUsed name='Tênis vermelho' price='200'
+                            productUrl={`${imageBaseUrl}/${product.product_images[0].path}`}
+                            onPress={() => handleNavigateToAnnouncementDetailsScreen(product.id)}
+                            IsNew={product.is_new}
+                            name={product.name} 
+                            userAvatarUrl={`${imageBaseUrl}/${product.user.avatar}`}	
+                            price={String( product.price / 100)}
+
                         />
 
                     )}
