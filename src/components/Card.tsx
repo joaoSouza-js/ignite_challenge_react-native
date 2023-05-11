@@ -1,19 +1,22 @@
 import { Text } from './Text'
 import { Avatar } from './Avatar'
 import { Pressable, Image, Box, HStack, IPressableProps, VStack } from 'native-base'
+import { priceFormatter } from '@utils/formates'
 
 
 interface CardProps extends IPressableProps {
     IsNew: boolean,
     isDeprecated?: boolean
     name: string,
-    price: string,
+    price: number,
     productUrl: string,
-    userAvatarUrl: string,
+    userAvatarUrl?: string,
 }
 
 export function Card({ IsNew, isDeprecated = false, name, price, productUrl, userAvatarUrl, ...rest}:CardProps){
-    console.log(productUrl)
+  
+    const priceFormated = priceFormatter.format(price).replace('R$', '')
+
     return (
         <VStack 
       
@@ -47,14 +50,17 @@ export function Card({ IsNew, isDeprecated = false, name, price, productUrl, use
                     justifyContent={'space-between'}
                     height={100}
                     padding={1}
-                >
-                    <Avatar.Avatar 
-                        borderWidth={2} 
-                        borderColor={'white'} 
-                        size={'6'} 
-                        source={{ uri: userAvatarUrl }}
-                        variant='small'
-                    />
+                >   
+                    {userAvatarUrl ? (
+                        <Avatar.Avatar 
+                            borderWidth={2} 
+                            borderColor={'white'} 
+                            size={'6'} 
+                            source={{ uri: userAvatarUrl }}
+                            variant='small'
+                        />
+
+                    ) : <Box/>}
                     <Box 
                     
                     justifyContent={'center'}
@@ -90,7 +96,7 @@ export function Card({ IsNew, isDeprecated = false, name, price, productUrl, use
                 <HStack alignItems={'center'}>
                     <Text fontSize={'xs'} color={ isDeprecated ? 'gray.600': 'gray.900'} fontFamily={'heading'}>R$ </Text>
                     <Text fontSize={'md'} color={ isDeprecated ? 'gray.600': 'gray.900'} fontFamily={'heading'}> 
-                        {price} 
+                        {priceFormated} 
                     </Text>
 
                 </HStack>

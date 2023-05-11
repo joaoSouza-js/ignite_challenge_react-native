@@ -21,6 +21,7 @@ import { AppNavigatorRoutesProps } from '@routes/app';
 
 import { ProductsProps  } from 'src/DTO/productDTO';
 import { imageBaseUrl } from '../../utils/ImageBaseUrl';
+import { priceFormatter } from '@utils/formates';
 
 
 
@@ -167,7 +168,7 @@ export function Home(){
                             IsNew={product.is_new}
                             name={product.name} 
                             userAvatarUrl={`${imageBaseUrl}/${product.user.avatar}`}	
-                            price={String( product.price / 100)}
+                            price={product.price / 100}
 
                         />
 

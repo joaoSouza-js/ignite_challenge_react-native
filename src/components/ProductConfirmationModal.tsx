@@ -101,7 +101,7 @@ export function ProductConfirmationModal(
                 }
             })
             handldeGoToHomeScreen()
-            console.log(photosResponse.data)
+           
         } catch (error) {
             const isAppError = error instanceof AppError
             Toast.show({

@@ -16,6 +16,7 @@ import { ProductsProps } from 'src/DTO/productDTO';
 
 import { imageBaseUrl } from '@utils/ImageBaseUrl';
 import { paymentsForm } from '@utils/paymets';
+import { priceFormatter } from '@utils/formates';
 
 interface ProductUserProps extends ProductsProps {
     description: string;
@@ -51,11 +52,7 @@ export function AnnouncementDetails({route: {params},navigation }: NativeStackSc
         return PaymentFormExist
     }) 
 
-    
-  
-
-    
-    
+    const productPriceFormated = product?.price ? priceFormatter.format(product?.price  / 100).replace('R$', '') :'0,00'
     return (
         <VStack flex={1}>
             <IconButton
@@ -124,7 +121,7 @@ export function AnnouncementDetails({route: {params},navigation }: NativeStackSc
                             <Text color={'blue.500'} fontFamily={'heading'}>
                                 R$ 
                             </Text> 
-                            {product!?.price  / 100}
+                            {productPriceFormated}
                         </Text>
 
                     </HStack>
@@ -166,7 +163,7 @@ export function AnnouncementDetails({route: {params},navigation }: NativeStackSc
                     <Text color={'blue.500'} fontFamily={'heading'}>
                         R$ 
                     </Text> 
-                    120,00
+                    {productPriceFormated}
                 </Text>
                 <Button 
                     leftIcon={<WhatsappLogo color={colors.gray[100]} weight="fill" size={20}/>} 
