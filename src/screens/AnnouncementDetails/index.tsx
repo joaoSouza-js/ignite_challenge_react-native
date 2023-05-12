@@ -12,13 +12,13 @@ import { PhotosCarousel } from '@components/PhotosCarousel';
 
 import { api } from '@libs/axios';
 import { AppRouteParamList } from '@routes/app';
-import { ProductsProps } from 'src/DTO/productDTO';
+import { ProductProps } from 'src/DTO/productDTO';
 
 import { imageBaseUrl } from '@utils/ImageBaseUrl';
 import { paymentsForm } from '@utils/paymets';
 import { priceFormatter } from '@utils/formates';
 
-interface ProductUserProps extends ProductsProps {
+interface ProductUserProps extends ProductProps {
     description: string;
     user: {
         avatar: string;
@@ -80,7 +80,7 @@ export function AnnouncementDetails({route: {params},navigation }: NativeStackSc
                         size={6}  
                         borderWidth={2} 
                         source={{
-                            uri: `${imageBaseUrl}/${product?.user.avatar}`,
+                            uri: `${imageBaseUrl}/${product?.user.avatar}` ?? undefined,
                          }} 
                     />
                     <Text 

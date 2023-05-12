@@ -19,7 +19,7 @@ import { api } from '@libs/axios';
 import { useAuth } from '@hooks/useAuth';
 import { AppNavigatorRoutesProps } from '@routes/app';
 
-import { ProductsProps  } from 'src/DTO/productDTO';
+import { ProductProps  } from 'src/DTO/productDTO';
 import { imageBaseUrl } from '../../utils/ImageBaseUrl';
 import { priceFormatter } from '@utils/formates';
 
@@ -32,8 +32,8 @@ export function Home(){
     const navigation = useNavigation<AppNavigatorRoutesProps>()
     const {user} = useAuth()
 
-    const { data: products = [] } = useQuery<ProductsProps[]>(['query', 'idsdd'], async () => {
-        const response = await api.get<ProductsProps[]>('/products')
+    const { data: products = [] } = useQuery<ProductProps[]>(['query', 'idsdd'], async () => {
+        const response = await api.get<ProductProps[]>('/products')
         return response.data
     })
 

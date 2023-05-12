@@ -8,10 +8,10 @@ import { Heading } from "./Heading";
 
 interface PhotosCarouselProps  {
     images: string[];
-    isDisabled?: boolean;
+    isActived?: boolean;
 }
 
-export function PhotosCarousel({images,isDisabled=false}: PhotosCarouselProps){
+export function PhotosCarousel({images,isActived=true}: PhotosCarouselProps){
 
     const screenWidth = Dimensions.get('window').width;
 
@@ -32,8 +32,8 @@ export function PhotosCarousel({images,isDisabled=false}: PhotosCarouselProps){
                         <VStack
                             width={'full'}
                             height={'full'}
-                            backgroundColor={isDisabled ? 'black' : 'gray.300'}
-                            opacity={isDisabled ? .6 : 1}
+                            backgroundColor={!isActived ? 'black' : 'gray.300'}
+                            opacity={!isActived ? .6 : 1}
                         >
                             <ImageBackground
                                 key={index}
@@ -51,7 +51,7 @@ export function PhotosCarousel({images,isDisabled=false}: PhotosCarouselProps){
                             </ImageBackground>
 
                         </VStack>
-                        {isDisabled && (
+                        {!isActived && (
                             <Center
                                 width={'full'}
                                 height={'full'}

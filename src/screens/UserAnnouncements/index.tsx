@@ -7,7 +7,7 @@ import {useNavigation} from '@react-navigation/native'
 import { AppNavigatorRoutesProps } from "@routes/app";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@libs/axios";
-import { ProductsProps } from "src/DTO/productDTO";
+import { ProductProps } from "src/DTO/productDTO";
 import { imageBaseUrl } from "@utils/ImageBaseUrl";
 export function UserAnnouncements(){
     const navigation = useNavigation<AppNavigatorRoutesProps>()
@@ -15,12 +15,12 @@ export function UserAnnouncements(){
     function handleNavigateToCreateAnnouncementScreen() {
         navigation.navigate('CreateAnnouncement')
     }
-    function handleNavigateToEditAnnouncementScreen() {
-        navigation.navigate('EditAnnouncement')
+    function handleNavigateToUserAnnoucementDetails(productId: string) {
+        navigation.navigate('UserAnnouncementDetails',{productId})
     }
 
-    const { data: userProducts = [] } = useQuery<ProductsProps[]>(['userProduct'], async () => {
-        const response = await api.get<ProductsProps[]>('/users/products')
+    const { data: userProducts = [] } = useQuery<ProductProps[]>(['userProduct'], async () => {
+        const response = await api.get<ProductProps[]>('/users/products')
         return response.data
     })
 
@@ -56,7 +56,7 @@ export function UserAnnouncements(){
                 renderItem={({item:userProduct}) => (
                     <Card 
                         productUrl={`${imageBaseUrl}/${userProduct.product_images[0].path}`}
-                        onPress={handleNavigateToEditAnnouncementScreen} 
+                        onPress={() => handleNavigateToUserAnnoucementDetails(userProduct.id)} 
                         IsNew = {userProduct.is_new}
                         name={userProduct.name}
                         price={userProduct.price / 100} 

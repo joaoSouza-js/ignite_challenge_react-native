@@ -14,9 +14,10 @@ export interface paymentMethodProps {
 }
 
 
-export interface ProductsProps { 
+export interface ProductProps { 
     accept_trade: boolean,
     id: string,
+    is_active: boolean,
     name: string,
     price: number,
     is_new: boolean,
