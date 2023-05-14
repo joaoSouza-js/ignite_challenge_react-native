@@ -84,10 +84,9 @@ export function ProductConfirmationModal(
                 return imageFormated
             })
 
+         
+
             const photosForm = new FormData()
-
-            photosForm.append('images', imagesFormated[0] as any)
-
 
             imagesFormated.forEach((image) => {
                 photosForm.append('images', image as any);
@@ -95,7 +94,7 @@ export function ProductConfirmationModal(
             
             photosForm.append('product_id', productResponse.data.id)
     
-            const photosResponse = await api.post('/products/images', photosForm, {
+           await api.post('/products/images', photosForm, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

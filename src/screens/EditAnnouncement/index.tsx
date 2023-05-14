@@ -28,7 +28,7 @@ import { ProductConfirmationModal } from "./components/ProductConfirmationModal"
 const createProductSchemea = z.object({
     name: z.string({ required_error: 'Informe o Nome do Produto' }).min(4, 'O nome deve conter no mínimo 4 caracteres'),
     description: z.string({ required_error: 'Informe a Descrição do Produto' }).min(10, 'A descrição deve conter no mínimo 10 caracteres'),
-    price: z.coerce.number({ required_error: 'Informe o Preço do Produto' }).min(1, 'O preço deve ser maior que 0'),
+    price: z.coerce.number({ required_error: 'Informe o Preço do Produto' }).min(1, 'O preço deve ser maior que 0').max(5000, 'O preço deve ser menor que 5000'),
     acceptTrade: z.boolean(),
     isNew: z.boolean(),
     paymentMethods: z.array(z.object({
@@ -55,6 +55,7 @@ interface ProductUserProps extends ProductProps {
 type createProductFormData = z.infer<typeof createProductSchemea>
 export function EditAnnouncement({ navigation, route:{params}}: NativeStackScreenProps<AppRouteParamList,'EditAnnouncement'>) {
     const [images, setImages] = useState<ImageProps[]>([])
+    const [oldIdImages, setOldIdImages] = useState<string[]>([])
     const [photoModalIsVisible, setPhotoModalIsVisible] = useState(false)
     const [productInformations, setProductInformations] = useState<createProductFormData>({} as createProductFormData,)
 
@@ -63,18 +64,20 @@ export function EditAnnouncement({ navigation, route:{params}}: NativeStackScree
 
     const { data: product } = useQuery<ProductUserProps>(['productDetais', params.productId], async () => {
         const response = await api.get<ProductUserProps>(`/products/${params.productId}`)
+        
         const ProductImages: ImageProps[] = response.data.product_images.map(image => {
             return {
                 height: 981,
                 width: 736,
                 uri: `${imageBaseUrl}/${image.path}`,
                 type: 'image',
-                assetId: uuid.v4() as string,
+                assetId: image.id,
                 fileName: image.path,
 
 
             }
         })
+        setOldIdImages(response.data.product_images.map(image => image.id))
         setImages(ProductImages.slice(0, 3))
         return response.data
     })
@@ -353,7 +356,7 @@ export function EditAnnouncement({ navigation, route:{params}}: NativeStackScree
                     closePhotoModal={closePhotoModal}
                 />
                 <ProductConfirmationModal
-                  
+                    productId={product?.id}
                     images={images}
                     visible={ProductConfirmationModalIsVisible}
                     name={productInformations.name}

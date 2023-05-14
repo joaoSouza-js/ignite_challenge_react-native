@@ -24,7 +24,6 @@ export function AddPhotoButton({handleAddImages}:AddPhotoButtonProps){
             allowsMultipleSelection: true
         });
 
-        console.log('photoresponse=> ',response)
 
         if (response.canceled) {
            return Toast.show({

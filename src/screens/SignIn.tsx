@@ -43,7 +43,7 @@ export function SignIn({ navigation }: NativeStackScreenProps<AuthRoutesParamLis
 
 
             Toast.show({
-                title: isAppError ? error.message : 'Ocorreu um erro ao criar o usuário',
+                title: isAppError ? error.message : 'Ocorreu um erro ao realizar o login ',
                 placement: 'top',
                 backgroundColor: 'red.500',
             })

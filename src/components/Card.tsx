@@ -6,14 +6,14 @@ import { priceFormatter } from '@utils/formates'
 
 interface CardProps extends IPressableProps {
     IsNew: boolean,
-    isDeprecated?: boolean
+    isActived?: boolean
     name: string,
     price: number,
     productUrl: string,
     userAvatarUrl?: string,
 }
 
-export function Card({ IsNew, isDeprecated = false, name, price, productUrl, userAvatarUrl, ...rest}:CardProps){
+export function Card({ IsNew, isActived = true, name, price, productUrl, userAvatarUrl, ...rest}:CardProps){
   
     const priceFormated = priceFormatter.format(price).replace('R$', '')
 
@@ -31,9 +31,9 @@ export function Card({ IsNew, isDeprecated = false, name, price, productUrl, use
                 _pressed={{
                     opacity: .7
                 }}
-                isDisabled={isDeprecated}
-                backgroundColor={isDeprecated? 'black' : 'gray.300'}
-                opacity={isDeprecated ? .6 : 1}
+         
+                backgroundColor={isActived ? 'gray.300': 'black' }
+                opacity={isActived ? 1 : .6}
                 rounded={'lg'}
                 {...rest}
             >
@@ -84,7 +84,7 @@ export function Card({ IsNew, isDeprecated = false, name, price, productUrl, use
 
             </Pressable>
                 {
-                    isDeprecated && (
+                    !isActived && (
                     <Box  alignItems={'center'} >
                             <Text marginTop={-8} fontSize={'xs'} textTransform={'uppercase'} color={'white'}>Anúncio desativado</Text>
 
@@ -92,10 +92,10 @@ export function Card({ IsNew, isDeprecated = false, name, price, productUrl, use
                     )
                 }
             <VStack padding={1}>
-                <Text fontSize={'sm'} numberOfLines={1} color={isDeprecated ? 'gray.600' : 'gray.900'} fontFamily={'mono'}>{name}</Text>
+                <Text fontSize={'sm'} numberOfLines={1} color={isActived ? 'gray.900' :'gray.600' } fontFamily={'mono'}>{name}</Text>
                 <HStack alignItems={'center'}>
-                    <Text fontSize={'xs'} color={ isDeprecated ? 'gray.600': 'gray.900'} fontFamily={'heading'}>R$ </Text>
-                    <Text fontSize={'md'} color={ isDeprecated ? 'gray.600': 'gray.900'} fontFamily={'heading'}> 
+                    <Text fontSize={'xs'} color={ isActived ?  'gray.900': 'gray.600'} fontFamily={'heading'}>R$ </Text>
+                    <Text fontSize={'md'} color={ isActived ?  'gray.900': 'gray.600'} fontFamily={'heading'}> 
                         {priceFormated} 
                     </Text>
 

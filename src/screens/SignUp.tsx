@@ -1,12 +1,12 @@
 import { useState } from "react";
-import * as ImagePicker from 'expo-image-picker';
+import uuid from 'react-native-uuid';
 import { useForm } from 'react-hook-form'
+import * as ImagePicker from 'expo-image-picker';
 import { zodResolver } from '@hookform/resolvers/zod'
 import {PencilSimpleLine} from 'phosphor-react-native'
-import { ScrollView, VStack,Box, Center, useToast } from 'native-base'
 import { Keyboard, TouchableWithoutFeedback } from "react-native";
-import uuid from 'react-native-uuid';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { ScrollView, VStack,Box, Center, useToast } from 'native-base'
 
 import Logo from '@assets/logo.svg'
 
@@ -94,12 +94,7 @@ export function SignUp({navigation }: NativeStackScreenProps<AuthRoutesParamList
                backgroundColor: 'red.500',
            })
 
-           
        }
-
-
-
-
 
     }
 
@@ -126,7 +121,6 @@ export function SignUp({navigation }: NativeStackScreenProps<AuthRoutesParamList
                 uri: imageResponse.assets[0].uri,
                 type: `${imageResponse.assets[0].type}/${fileExtension}`
             }
-            console.log(file)
 
             setUserPhoto(file)
         }

@@ -1,21 +1,24 @@
-import { HStack, IconButton, ScrollView, VStack, useTheme, useToast } from "native-base";
-import { ArrowLeft, PencilSimpleLine, Power, TrashSimple} from "phosphor-react-native";
-import {NativeStackScreenProps} from '@react-navigation/native-stack'
-import { AppRouteParamList } from "@routes/app";
+import {  useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@libs/axios";
-import { ProductProps } from "src/DTO/productDTO";
-import { cos } from "react-native-reanimated";
-import { imageBaseUrl } from "@utils/ImageBaseUrl";
-import { PhotosCarousel } from "@components/PhotosCarousel";
-import { Heading } from "@components/Heading";
+import {NativeStackScreenProps} from '@react-navigation/native-stack'
+import { ArrowLeft, PencilSimpleLine, Power, TrashSimple} from "phosphor-react-native";
+import { HStack, IconButton, ScrollView, VStack, useTheme, useToast } from "native-base";
+
 import { Text } from "@components/Text";
 import { Button } from "@components/Button";
 import { Avatar } from "@components/Avatar";
+import { Heading } from "@components/Heading";
+import { PhotosCarousel } from "@components/PhotosCarousel";
+
+import { AppError } from "@utils/AppError";
 import { paymentsForm } from "@utils/paymets";
 import { priceFormatter } from "@utils/formates";
-import { useState } from "react";
-import { AppError } from "@utils/AppError";
+import { imageBaseUrl } from "@utils/ImageBaseUrl";
+
+import { api } from "@libs/axios";
+import { useAuth } from "@hooks/useAuth";
+import { AppRouteParamList } from "@routes/app";
+import { ProductProps } from "src/DTO/productDTO";
 
 
 
@@ -31,11 +34,12 @@ interface ProductUserProps extends ProductProps {
 
 export function UserAnnoucementDtails({ navigation,route:{params} }: NativeStackScreenProps<AppRouteParamList,'UserAnnouncementDetails'>){
     const {colors} = useTheme()
+    const {user}  = useAuth()
     const [productIsActived, setProductIsActived] = useState(true)
     const [appIsSubmitting, setAppIsSubmitting] = useState(false)
     const { data: product } = useQuery<ProductUserProps>(['productDetais', params.productId], async () => {
         const response = await api.get<ProductUserProps>(`/products/${params.productId}`)
-        console.log(response.data)
+    
         setProductIsActived(response.data.is_active)
         return response.data
     },)
@@ -90,6 +94,8 @@ export function UserAnnoucementDtails({ navigation,route:{params} }: NativeStack
         })
     }
 
+   
+
     const annoucementPhotosUrl = product?.product_images.map(productImage => {
         const imageUrl = `${imageBaseUrl}/${productImage.path}`
         return imageUrl
@@ -104,7 +110,7 @@ export function UserAnnoucementDtails({ navigation,route:{params} }: NativeStack
     }) 
 
     const productPriceFormated = product?.price ? priceFormatter.format(product?.price / 100).replace('R$', '') : '0,00'
-    
+
     return (
         <VStack flex={1}>
             <HStack justifyContent={'space-between'} paddingX={6} marginTop={5} alignItems={'center'}>
@@ -148,7 +154,7 @@ export function UserAnnoucementDtails({ navigation,route:{params} }: NativeStack
                             size={6}
                             borderWidth={2}
                             source={{
-                                uri: `${imageBaseUrl}/${product?.user.avatar}` ?? undefined,
+                                uri: user.avatar ?? undefined,
                             }}
                         />
                         <Text
@@ -224,7 +230,7 @@ export function UserAnnoucementDtails({ navigation,route:{params} }: NativeStack
                         isLoading={appIsSubmitting}
 
                     >
-                       {product?.is_active ? 'Desativar anúncio' : 'Reativar anúncio'}
+                        {productIsActived ? 'Desativar anúncio' : 'Reativar anúncio'}
                     </Button>
                     <Button
                         onPress={handleDeleteProduct}

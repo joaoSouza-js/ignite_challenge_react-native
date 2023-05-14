@@ -1,10 +1,18 @@
-import React, { useRef } from 'react';
 import BottomSheet from '@gorhom/bottom-sheet';
-import { useQuery } from '@tanstack/react-query';
-import {useNavigation} from '@react-navigation/native'
+import { useQueries } from '@tanstack/react-query';
+import React, { useCallback, useRef, useState } from 'react';
 import { Keyboard, TouchableWithoutFeedback } from 'react-native'
+import {useFocusEffect, useNavigation} from '@react-navigation/native'
 import { ArrowRight, Faders, MagnifyingGlass, Plus, Tag } from 'phosphor-react-native'
-import {VStack,HStack, useTheme,Button as NativeBaseButton, IconButton, Box, FlatList} from 'native-base'
+import {
+    Box, 
+    VStack,
+    HStack, 
+    useTheme,
+    FlatList,
+    IconButton,
+    Button as NativeBaseButton, 
+} from 'native-base'
 
 
 import { Card } from '@components/Card'
@@ -21,21 +29,35 @@ import { AppNavigatorRoutesProps } from '@routes/app';
 
 import { ProductProps  } from 'src/DTO/productDTO';
 import { imageBaseUrl } from '../../utils/ImageBaseUrl';
-import { priceFormatter } from '@utils/formates';
-
-
-
+import { queryClient } from '@libs/reactQuery';
 
 export function Home(){
+    const {user} = useAuth()
     const {colors} = useTheme()
     const bottomSheetRef = useRef<BottomSheet>(null);
+    const [productName, setProductName] = useState('')
     const navigation = useNavigation<AppNavigatorRoutesProps>()
-    const {user} = useAuth()
-
-    const { data: products = [] } = useQuery<ProductProps[]>(['query', 'idsdd'], async () => {
+    
+    async function fetchProducts(){
         const response = await api.get<ProductProps[]>('/products')
         return response.data
+    }
+
+    async function fetchUserActivedProducstsLength(){
+        const response = await api.get<ProductProps[]>('/users/products')
+        const userAnnoucementsActive = response.data.filter(product => product.is_active)
+        return userAnnoucementsActive.length
+    }
+    
+    const [{ data: products = [], }, { data: userAnnoucementActivedLenght = 0 }] = useQueries({
+        queries: [
+            { queryKey: ['products'], queryFn: fetchProducts },
+            { queryKey: ['userAnnoucementsActiveLength'], queryFn: fetchUserActivedProducstsLength  }
+        ]
     })
+
+    const productsFiltred = products.filter(product => product.name.toLowerCase().includes(productName.toLowerCase()))   
+
 
     function handleOpenFilterModal(){
         bottomSheetRef.current?.expand()
@@ -46,7 +68,6 @@ export function Home(){
 
     function handleClosedKeyboard(){
         Keyboard.dismiss()
-       
     }
 
     function handleNavigateToCreateAnnouncementScreen(){
@@ -55,12 +76,27 @@ export function Home(){
     function handleNavigateToAnnouncementDetailsScreen(id: string) {
         navigation.navigate('AnnouncementDetails', { productId: id})
     }
-    
+
+    async function refetchData(){
+        const [productsUpdated, userAnnoucementsActiveLengthUpdated] =  await Promise.all([
+            fetchProducts(),
+            fetchUserActivedProducstsLength()
+        ])
+        queryClient.setQueryData(['products'], productsUpdated)
+        queryClient.setQueryData(['userAnnoucementsActiveLength'], userAnnoucementsActiveLengthUpdated)
+    }
+
+    useFocusEffect(useCallback(() => {
+        refetchData()
+    }  ,[]))
+
+  
+   
     return (
         <TouchableWithoutFeedback onPress={handleClosedKeyboard}>
             <VStack paddingX={6} flex={1}>
                 <HStack alignItems={'center'} marginTop={9} width={'full'} >
-                    <Avatar.Avatar source={{ uri: `${imageBaseUrl}/${user.avatar}` }} borderWidth={2} size={11}/>
+                    <Avatar.Avatar source={{ uri: user.avatar }} borderWidth={2} size={11}/>
 
                     <VStack flex={1} marginLeft={3} >
                         <Text fontSize={'md'}>Boas vindas,</Text>
@@ -78,7 +114,6 @@ export function Home(){
                 </HStack>
 
                 <VStack marginTop={8}>
-                    <Text color={'gray.700'}>texto</Text>
                     <HStack 
                         backgroundColor={'#647AC71A'}
                         alignItems={'center'} marginTop={3}
@@ -89,7 +124,7 @@ export function Home(){
                     >
                         <Tag size={20} color={colors.blue[400]} />
                         <VStack marginLeft={4} flex={1}>
-                            <Heading>4</Heading>
+                            <Heading>{userAnnoucementActivedLenght}</Heading>
                             <Text>anúncios ativos</Text> 
                         </VStack>
                         <NativeBaseButton 
@@ -113,7 +148,7 @@ export function Home(){
                     <HStack marginTop={3} overflow={'hidden'} rounded={'md'} paddingLeft={'px'} backgroundColor={'gray.100'}>
                         <TextInput.Input 
                             flex={1}
-                           
+                            onChangeText={setProductName}
                             _focus={{
                                 borderWidth: 0,
                                 borderLeftWidth: '2',
@@ -158,7 +193,7 @@ export function Home(){
                     }}
                     showsVerticalScrollIndicator={false}
                     numColumns={2}
-                    data={products}
+                    data={productsFiltred}
                     keyExtractor={key => key.id}
                 
                     renderItem={({item: product}) => (

@@ -1,9 +1,11 @@
 import { api } from "@libs/axios";
 import { getUserInLocalStorage, removeUserInLocalStorage, SaveUserInLocalSotorage } from "@storage/storageUser";
 import { getAuthTokensInLocalStorage, removeTokenInLocalStorage, SaveTokensInLocalStorage } from "@storage/tokens";
+import { imageBaseUrl } from "@utils/ImageBaseUrl";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { AUTH_TOKENS_DTO } from "src/DTO/authTokensDTO";
 import { USER_DTO } from "src/DTO/userDTO";
+import { set } from "zod";
 
 interface AuthContextProps {
     signIn: (email: string, password: string) => Promise<void>;
@@ -38,14 +40,24 @@ export function AuthContextProvider({children}: AuthContextProviderProps){
         SaveUserInLocalSotorage(user)
         setUser(user)
     }
-    function removeUser(){
-        setUser({} as USER_DTO)
-        removeUserInLocalStorage()
-        removeTokenInLocalStorage()
+    function signOut(){
+        try {
+            setAppIsLoading(true)
+            setUser({} as USER_DTO)
+            removeUserInLocalStorage()
+            removeTokenInLocalStorage()
+            
+        } catch (error) {
+            console.log(error)
+        }
+        finally {
+            setAppIsLoading(false)
+        }
     }
 
     async function fetchUserDatas(){
         try {
+            setAppIsLoading(true)
             const user = await getUserInLocalStorage()
             const authTokens = await getAuthTokensInLocalStorage()
             
@@ -73,8 +85,12 @@ export function AuthContextProvider({children}: AuthContextProviderProps){
             if(!user&& token && !refresh_token){
                 return
             }
+            const userWithAvatar = {
+                ...user,
+                avatar: `${imageBaseUrl}/${user.avatar}`
+            }
 
-            SaveUser(user)
+            SaveUser(userWithAvatar)
             SaveAuthTokens({
                 token,
                 refresh_token

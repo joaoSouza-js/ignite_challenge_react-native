@@ -1,14 +1,21 @@
+import { useCallback } from "react";
+import { Plus } from "phosphor-react-native";
+import { useQuery } from "@tanstack/react-query";
+import { FlatList, HStack, IconButton, VStack } from "native-base";
+import {useFocusEffect, useNavigation} from '@react-navigation/native'
+
+import { Text } from "@components/Text";
 import { Card } from "@components/Card";
 import { Heading } from "@components/Heading";
-import { Text } from "@components/Text";
-import { FlatList, HStack, IconButton, VStack } from "native-base";
-import { Plus } from "phosphor-react-native";
-import {useNavigation} from '@react-navigation/native'
+
 import { AppNavigatorRoutesProps } from "@routes/app";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@libs/axios";
-import { ProductProps } from "src/DTO/productDTO";
 import { imageBaseUrl } from "@utils/ImageBaseUrl";
+
+import { api } from "@libs/axios";
+import { queryClient } from "@libs/reactQuery";
+
+import { ProductProps } from "src/DTO/productDTO";
+
 export function UserAnnouncements(){
     const navigation = useNavigation<AppNavigatorRoutesProps>()
     
@@ -19,10 +26,18 @@ export function UserAnnouncements(){
         navigation.navigate('UserAnnouncementDetails',{productId})
     }
 
-    const { data: userProducts = [] } = useQuery<ProductProps[]>(['userProduct'], async () => {
+    const { data: userProducts = [] } = useQuery<ProductProps[]>(['userProducts'], async () => {
         const response = await api.get<ProductProps[]>('/users/products')
         return response.data
     })
+
+    async function refetchUserProductAnnoucements() {
+        const response = await api.get<ProductProps[] > ('/users/products')
+        queryClient.setQueryData(['userProducts'], response.data)
+    }
+    useFocusEffect(useCallback(() => {
+        refetchUserProductAnnoucements()
+    }, []))
 
 
 
@@ -39,7 +54,7 @@ export function UserAnnouncements(){
             </HStack>
 
             <HStack>
-                <Text>8 anúncios</Text>
+                <Text>{userProducts.length} anúncios</Text>
             </HStack>
 
 
@@ -55,6 +70,7 @@ export function UserAnnouncements(){
 
                 renderItem={({item:userProduct}) => (
                     <Card 
+                        isActived={userProduct.is_active}
                         productUrl={`${imageBaseUrl}/${userProduct.product_images[0].path}`}
                         onPress={() => handleNavigateToUserAnnoucementDetails(userProduct.id)} 
                         IsNew = {userProduct.is_new}

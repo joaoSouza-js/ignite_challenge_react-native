@@ -61,11 +61,14 @@ export function ProductConfirmationModal(
     function handldeGoToHomeScreen(){
         Navigation.navigate('HomeTabs')
     }
-
+    
     async function handleConfirmProduct(){
         try {
             setAppIsLoading(true)
-            const productResponse = await api.put(`/products/${productId}`, {
+         
+
+
+            await api.put(`/products/${productId}`, {
                 name: name,
                 description: description,
                 is_new: isNew,
@@ -73,7 +76,7 @@ export function ProductConfirmationModal(
                 accept_trade: acceptTrade,
                 payment_methods: acceptPaymentsForm
             })
-            
+
             const imagesFormated = images.map(image => {
                 const fileExtension = image.uri.split('.').pop()
                 const photoFileName = `${uuid.v4()}.${fileExtension}`.toLowerCase()
@@ -88,23 +91,21 @@ export function ProductConfirmationModal(
 
             const photosForm = new FormData()
 
-            photosForm.append('images', imagesFormated[0] as any)
-
-
             imagesFormated.forEach((image) => {
                 photosForm.append('images', image as any);
             })
             
-            photosForm.append('product_id', productResponse.data.id)
+            photosForm.append('product_id', productId as string )
     
-            const photosResponse = await api.post('/products/images', photosForm, {
+            await api.post('/products/images', photosForm, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             })
+            
             handldeGoToHomeScreen()
            
-        } catch (error) {
+        } catch (error) { 
             const isAppError = error instanceof AppError
             Toast.show({
                 title: isAppError ? error.message : 'Ocorreu um erro ao criar o produto',
