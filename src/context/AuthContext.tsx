@@ -5,10 +5,10 @@ import { imageBaseUrl } from "@utils/ImageBaseUrl";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { AUTH_TOKENS_DTO } from "src/DTO/authTokensDTO";
 import { USER_DTO } from "src/DTO/userDTO";
-import { set } from "zod";
 
 interface AuthContextProps {
     signIn: (email: string, password: string) => Promise<void>;
+    signOut: () => Promise<void>;
     user: USER_DTO;
     appIsLoading: boolean;
 }
@@ -40,12 +40,12 @@ export function AuthContextProvider({children}: AuthContextProviderProps){
         SaveUserInLocalSotorage(user)
         setUser(user)
     }
-    function signOut(){
+    async function signOut(){
         try {
             setAppIsLoading(true)
             setUser({} as USER_DTO)
-            removeUserInLocalStorage()
-            removeTokenInLocalStorage()
+            await removeUserInLocalStorage()
+            await removeTokenInLocalStorage()
             
         } catch (error) {
             console.log(error)
@@ -109,7 +109,7 @@ export function AuthContextProvider({children}: AuthContextProviderProps){
 
 
     return (
-        <AuthContext.Provider value={{ signIn, user, appIsLoading}}>
+        <AuthContext.Provider value={{ signIn, user, signOut, appIsLoading}}>
             {children}
         </AuthContext.Provider>
     )

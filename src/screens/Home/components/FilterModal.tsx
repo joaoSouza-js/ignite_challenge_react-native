@@ -62,13 +62,17 @@ export const FilterModal = forwardRef<BottomSheetMethods,  FilterModalProps>(({ 
         control, name: 'paymentMethods'
     })
 
-    function handleResetFilter(){
-        reset()
-    }
-
     function handleCloseModal() {
         onCloseModal()
     }
+    
+    async function handleResetFilter(){
+        const response = await api.get('products/')
+        queryClient.setQueryData(['products'], response.data)
+        reset()
+        handleCloseModal()
+    }
+
 
     async function handleApplyFilter(data: any){
         const formData = data as FilterSchemaOutput

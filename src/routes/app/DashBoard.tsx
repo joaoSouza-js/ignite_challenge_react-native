@@ -2,18 +2,18 @@ import {  NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Home } from '@screens/Home'
 
-import { EditAnnouncement } from '@screens/EditAnnouncement'
 import { UserAnnouncements } from '@screens/UserAnnouncements'
 import { useTheme } from 'native-base'
-import { Platform } from 'react-native'
-import { House, SignOut, Tag } from 'phosphor-react-native'
+import { Platform,  Alert} from 'react-native'
+import { House, SignOut as SignOutIcon, Tag } from 'phosphor-react-native'
+import { SignOut } from '@screens/SignOut'
 
 
 
 export type DashBoardParamList = {
     Home: undefined,
     UserAnnoucements: undefined,
-    Exit: undefined,
+    SignOut: undefined,
 }
 
 export type DashBoardNavigatorRoutesProps = NativeStackNavigationProp<DashBoardParamList>
@@ -60,14 +60,12 @@ export function DashBoard() {
                     tabBarIcon: ({ color, size }) => (<Tag size={size} color={color} />)
                 }}
              />
-            <Screen  
-                name='Exit' 
-                listeners={{}}
-                component={EditAnnouncement} 
+            <Screen
+                name='SignOut' 
+                component={SignOut} 
                 options={{
                     title: 'Novo Bolão',
-                    tabBarActiveTintColor: '#ff00ff',
-                    tabBarIcon: ({ color, size }) => (<SignOut size={size}/>)
+                    tabBarIcon: ({  size }) => (<SignOutIcon color={colors.red[400]} size={size}/>)
                 }}
             />
         </Navigator>
