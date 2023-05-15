@@ -17,6 +17,7 @@ import { ProductProps } from 'src/DTO/productDTO';
 import { imageBaseUrl } from '@utils/ImageBaseUrl';
 import { paymentsForm } from '@utils/paymets';
 import { priceFormatter } from '@utils/formates';
+import { Alert, Linking } from 'react-native';
 
 interface ProductUserProps extends ProductProps {
     description: string;
@@ -53,6 +54,18 @@ export function AnnouncementDetails({route: {params},navigation }: NativeStackSc
     }) 
 
     const productPriceFormated = product?.price ? priceFormatter.format(product?.price  / 100).replace('R$', '') :'0,00'
+
+
+
+    async function handleRedirectUser(){
+        
+        const supported = await Linking.canOpenURL(`https://wa.me/${product?.user.tel}`);
+       
+        if (!supported) {
+            return Alert.alert('Falha ao abrir o WhatsApp.',`O numero de telefone de ${product?.user.name} é ${product?.user.tel}`)
+        }
+        await Linking.openURL(`https://wa.me/${product?.user.tel}?text=Olá, vi seu anúncio no app e gostaria de saber mais sobre o produto ${product?.name}`)
+    }
     return (
         <VStack flex={1}>
             <IconButton
@@ -166,6 +179,7 @@ export function AnnouncementDetails({route: {params},navigation }: NativeStackSc
                     {productPriceFormated}
                 </Text>
                 <Button 
+                    onPress={handleRedirectUser}
                     leftIcon={<WhatsappLogo color={colors.gray[100]} weight="fill" size={20}/>} 
                     variant="tertiary" width={'50%'}
                 >

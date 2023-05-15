@@ -3,6 +3,7 @@ import { useQueries } from '@tanstack/react-query';
 import React, { useCallback, useRef, useState } from 'react';
 import { Keyboard, TouchableWithoutFeedback } from 'react-native'
 import {useFocusEffect, useNavigation} from '@react-navigation/native'
+import {BottomTabScreenProps} from '@react-navigation/bottom-tabs'
 import { ArrowRight, Faders, MagnifyingGlass, Plus, Tag } from 'phosphor-react-native'
 import {
     Box, 
@@ -25,13 +26,14 @@ import { FilterModal } from './components/FilterModal';
 
 import { api } from '@libs/axios';
 import { useAuth } from '@hooks/useAuth';
+import {DashBoardParamList} from '@routes/app/DashBoard'
 import { AppNavigatorRoutesProps } from '@routes/app';
 
 import { ProductProps  } from 'src/DTO/productDTO';
 import { imageBaseUrl } from '../../utils/ImageBaseUrl';
 import { queryClient } from '@libs/reactQuery';
 
-export function Home(){
+export function Home({ navigation: HomeNavigation}: BottomTabScreenProps<DashBoardParamList,'Home'>){
     const {user} = useAuth()
     const {colors} = useTheme()
     const bottomSheetRef = useRef<BottomSheet>(null);
@@ -75,6 +77,9 @@ export function Home(){
     }
     function handleNavigateToAnnouncementDetailsScreen(id: string) {
         navigation.navigate('AnnouncementDetails', { productId: id})
+    }
+    function handleNavigateToUserAnnouncementsScreen() {
+        HomeNavigation.navigate('UserAnnoucements')
     }
 
     async function refetchData(){
@@ -128,6 +133,7 @@ export function Home(){
                             <Text>anúncios ativos</Text> 
                         </VStack>
                         <NativeBaseButton 
+                            onPress={handleNavigateToUserAnnouncementsScreen}
                             rightIcon={<ArrowRight size={20} color={colors.blue[400]} />}
                             backgroundColor={'transparent'}
                             _text={{

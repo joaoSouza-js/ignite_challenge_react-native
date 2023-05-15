@@ -12,11 +12,11 @@ import { House, SignOut, Tag } from 'phosphor-react-native'
 
 export type DashBoardParamList = {
     Home: undefined,
-    UserProductsTabs: undefined,
+    UserAnnoucements: undefined,
     Exit: undefined,
 }
 
-export type HomeNavigatorRoutesProps = NativeStackNavigationProp<DashBoardParamList>
+export type DashBoardNavigatorRoutesProps = NativeStackNavigationProp<DashBoardParamList>
 
 const { Navigator, Screen } = createBottomTabNavigator<DashBoardParamList>()
 
@@ -54,7 +54,7 @@ export function DashBoard() {
                 }}
             />
             <Screen 
-                name='UserProductsTabs' component={UserAnnouncements}
+                name='UserAnnoucements' component={UserAnnouncements}
                 options={{
                     title: 'Novo Bolão',
                     tabBarIcon: ({ color, size }) => (<Tag size={size} color={color} />)
