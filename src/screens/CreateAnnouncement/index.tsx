@@ -10,6 +10,7 @@ import { Button } from "@components/Button";
 import { Heading } from "@components/Heading";
 import { CheckBox } from "@components/CheckBox";
 import { TextArea } from "@components/TextArea";
+import { SwitchInput } from '@components/Switch';
 import { TextInput } from "@components/TextInput";
 import { PhotoCard } from "@components/PhotoCard";
 import { PhotoModal } from "../../components/PhotoModal";
@@ -19,6 +20,8 @@ import { ProductConfirmationModal } from "../../components/ProductConfirmationMo
 
 import { paymentsForm } from "@utils/paymets";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigatorRoutesProps } from "@routes/app";
 
 const createProductSchemea = z.object({
     name: z.string({ required_error: 'Informe o Nome do Produto'}).min(4,'O nome deve conter no mínimo 4 caracteres'),
@@ -47,6 +50,8 @@ export function CreateAnnouncement(){
     const [photoModal, setPhotoModal] = useState<string | undefined>()
     const [ProductConfirmationModalIsVisible, setProductConfirmationModalIsVisible] = useState(false)
 
+    const Navigator = useNavigation <AppNavigatorRoutesProps>()
+
     const { handleSubmit, formState, control} = useForm<createProductFormData>({
         resolver: zodResolver(createProductSchemea),
         defaultValues: {
@@ -72,6 +77,10 @@ export function CreateAnnouncement(){
     function openPhotoModal(photoUrl: string){
         setPhotoModal(photoUrl)
         setPhotoModalIsVisible(true)
+    }
+
+    function handleNavigateToPreviusScreen(){
+        Navigator.goBack()
     }
 
     function closePhotoModal(){
@@ -128,7 +137,7 @@ export function CreateAnnouncement(){
                     
                     <Header
                         title="Criar anúncio"
-                        onScreenNavigate={() => {}}  
+                        onScreenNavigate={handleNavigateToPreviusScreen}  
                     />
           
                     <VStack marginTop={6} paddingX={6}>
@@ -240,7 +249,7 @@ export function CreateAnnouncement(){
                                 <Heading fontSize={'sm'}>
                                     Aceita troca?
                                 </Heading>
-                                <Switch isChecked onTrackColor={'blue.400'} />
+                                <SwitchInput.SwitchControlled name="acceptTrade" control={control} />
                             </VStack>
                             <VStack marginTop={6}>
                                 <Heading  fontSize={'sm'}>Meios de pagamento aceitos</Heading>
@@ -292,7 +301,13 @@ export function CreateAnnouncement(){
                     paddingTop={5}
                     paddingBottom={4}
                 >
-                    <Button variant="secundary" width={'48%'}>Cancelar </Button>
+                    <Button 
+                        variant="secundary" 
+                        onPress={handleNavigateToPreviusScreen}
+                        width={'48%'}
+                        >
+                            Cancelar 
+                    </Button>
                     <Button 
                         onPress={handleSubmit(handleCheckFileds)}
                         width={'48%'}

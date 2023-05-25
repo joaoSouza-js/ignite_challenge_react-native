@@ -110,7 +110,7 @@ function InputControlled({ name, control, ...rest }: ITextInputControlledProps){
             render={({ field: { onChange, onBlur, value } }) => (
                 <Input
                     onChangeText={onChange}
-                    value={value}
+                    value={value === undefined ? value : String(value) } 
                     onBlur={onBlur}
                     {...rest}
                 />

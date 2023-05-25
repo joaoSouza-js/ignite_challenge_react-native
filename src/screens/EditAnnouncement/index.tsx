@@ -1,5 +1,5 @@
 import { useState } from "react";
-import uuid from 'react-native-uuid'
+
 import { TouchableWithoutFeedback, Keyboard } from 'react-native'
 import { HStack, Radio, ScrollView, Switch, VStack, useToast } from "native-base";
 import {NativeStackScreenProps} from '@react-navigation/native-stack'
@@ -24,6 +24,7 @@ import {ProductProps} from '../../DTO/productDTO'
 import { api } from "@libs/axios";
 import { imageBaseUrl } from "@utils/ImageBaseUrl";
 import { ProductConfirmationModal } from "./components/ProductConfirmationModal";
+import { SwitchInput } from "@components/Switch";
 
 const createProductSchemea = z.object({
     name: z.string({ required_error: 'Informe o Nome do Produto' }).min(4, 'O nome deve conter no mínimo 4 caracteres'),
@@ -158,6 +159,14 @@ export function EditAnnouncement({ navigation, route:{params}}: NativeStackScree
         navigation.navigate('HomeTabs')
     }
 
+
+    function handleNavigateToPreviusScreen() {
+        navigation.goBack()
+    }
+
+
+    
+
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <VStack flex={1}>
@@ -171,7 +180,7 @@ export function EditAnnouncement({ navigation, route:{params}}: NativeStackScree
 
                     <Header
                         title="Editar anúncio"
-                        onScreenNavigate={handleNavigateToHomeScreen}
+                        onScreenNavigate={handleNavigateToPreviusScreen}
                     />
 
                     <VStack marginTop={6} paddingX={6}>
@@ -284,7 +293,7 @@ export function EditAnnouncement({ navigation, route:{params}}: NativeStackScree
                                 <Heading fontSize={'sm'}>
                                     Aceita troca?
                                 </Heading>
-                                <Switch isChecked onTrackColor={'blue.400'} />
+                                <SwitchInput.SwitchControlled name="acceptTrade" control={control} />
                             </VStack>
                             <VStack marginTop={6}>
                                 <Heading fontSize={'sm'}>Meios de pagamento aceitos</Heading>

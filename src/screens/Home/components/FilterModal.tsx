@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { forwardRef, useMemo } from "react";
+import { forwardRef, useMemo, useState } from "react";
 import BottomSheet from '@gorhom/bottom-sheet';
 import { X, XCircle } from "phosphor-react-native";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-import { HStack, IconButton, Switch, VStack, useTheme } from "native-base";
+import { HStack, IconButton, VStack, useTheme } from "native-base";
 
 import { Text } from "@components/Text";
 import { Button } from "@components/Button";
@@ -15,6 +15,7 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 
 import { api } from '@libs/axios';
 import { queryClient } from '@libs/reactQuery';
+import { SwitchInput } from '@components/Switch';
 
 interface FilterModalProps {
     onCloseModal: () => void;
@@ -42,10 +43,11 @@ export const FilterModal = forwardRef<BottomSheetMethods,  FilterModalProps>(({ 
     const snapPoints = useMemo(() => [1, '100%'], []);
     const {colors} = useTheme()
 
+
     const { formState, control, handleSubmit, reset} = useForm<FilterSchemaData>({
         resolver: zodResolver(FilterSchema),
         defaultValues: {
-            acceptTrade: false,
+            acceptTrade: true,
             isNew: true,
             paymentMethods: paymentsForm.map(payment => {
                 return {
@@ -154,7 +156,7 @@ export const FilterModal = forwardRef<BottomSheetMethods,  FilterModalProps>(({ 
             </VStack>
             <VStack alignItems={'flex-start'} marginTop={6}>
                 <Text>Aceita troca?</Text>
-                <Switch onTrackColor={'blue.400'}  onChange={() => {}}/>
+                <SwitchInput.SwitchControlled name='acceptTrade' control={control} />
             </VStack>
             <VStack marginTop={6}>
                 <Heading color={'gray.800'} fontSize={'sm'}>Meios de pagamento aceitos</Heading>
