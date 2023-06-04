@@ -23,7 +23,7 @@ interface AuthContextProviderProps {
 
 interface SignInProps {
     token: string;
-    'refresh-token': string;
+    refresh_token: string;
     user: USER_DTO;
 }
 
@@ -80,7 +80,7 @@ export function AuthContextProvider({children}: AuthContextProviderProps){
                 password
             })
 
-            const { "refresh-token": refresh_token , user, token} = response.data
+            const { refresh_token , user, token} = response.data
 
             if(!user&& token && !refresh_token){
                 return
@@ -105,6 +105,14 @@ export function AuthContextProvider({children}: AuthContextProviderProps){
     useEffect(() => {
         fetchUserDatas()
     }, [])
+
+    useEffect(() => {
+        const subscribe = api.registerInterceptTokenManager(signOut)
+        return () => {
+            subscribe()
+        }
+    }, [signOut])
+
 
 
 
